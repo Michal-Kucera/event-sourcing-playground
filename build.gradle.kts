@@ -15,6 +15,8 @@ java {
     }
 }
 
+ext["jooq.version"] = "3.20.1"
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -50,7 +52,7 @@ dependencyManagement {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xconsistent-data-class-copy-visibility")
     }
 }
 
@@ -60,6 +62,10 @@ tasks.withType<Test> {
 
 tasks.named("compileKotlin") {
     dependsOn(tasks.named("jooqCodegen"))
+}
+
+tasks.named("jooqCodegen") {
+    inputs.files(fileTree("src/main/resources/db/migration"))
 }
 
 jooq {
@@ -80,8 +86,10 @@ jooq {
                     }
                 }
             }
-            target {
-                packageName = "com.michal.jooq"
+            generate {
+                target {
+                    packageName = "com.michal.jooq"
+                }
             }
         }
     }
