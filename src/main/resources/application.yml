@@ -1,3 +1,19 @@
 spring:
   application:
     name: event-sourcing-playground
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/event-sourcing-playground
+    username: postgres
+    password: postgres
+logging:
+  level:
+    root: INFO
+    org:
+      michal: DEBUG
+      jooq:
+        tools:
+          LoggerListener: DEBUG
