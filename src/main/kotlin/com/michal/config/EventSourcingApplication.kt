@@ -1,4 +1,4 @@
-package com.michal
+package com.michal.config
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

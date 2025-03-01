@@ -1,4 +1,4 @@
-package com.michal
+package com.michal.config
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
