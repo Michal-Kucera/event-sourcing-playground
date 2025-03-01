@@ -5,5 +5,6 @@ CREATE TABLE event_store
     payload   JSONB   NOT NULL,
     metadata  JSONB   NOT NULL,
     version   INT     NOT NULL,
-    created   DATE    NOT NULL DEFAULT CURRENT_DATE
+    created   DATE    NOT NULL,
+    CONSTRAINT unique_stream_version UNIQUE (stream_id, version)
 );

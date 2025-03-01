@@ -54,6 +54,11 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict", "-Xconsistent-data-class-copy-visibility")
     }
+    sourceSets {
+        main {
+            kotlin.srcDirs("src/jooq/kotlin")
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -74,7 +79,7 @@ jooq {
             name = "org.jooq.codegen.KotlinGenerator"
             database {
                 name = "com.github.sabomichal.jooq.PostgresDDLDatabase"
-                excludes = "flyway_schema_history"
+                excludes = "pg_catalog.*|information_schema.*|flyway_schema_history"
                 properties {
                     property {
                         key = "locations"
@@ -89,6 +94,7 @@ jooq {
             generate {
                 target {
                     packageName = "com.michal.jooq"
+                    directory = "src/jooq/kotlin"
                 }
             }
         }
