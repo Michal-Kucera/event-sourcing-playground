@@ -7,7 +7,6 @@ import com.michal.application.domain.merchant.MerchantEvent
 import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.application.domain.sharedkernel.eventsourcing.EventStore.AggregateNotFound
-import com.michal.application.usecase.merchant.OnboardMerchantUseCase.Method
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainInOrder
@@ -19,7 +18,7 @@ class MerchantUseCaseTest {
 
     private val eventStore = InMemoryMerchantEventStore()
     private val changeMerchantNameUseCase = ChangeMerchantNameUseCase(eventStore)
-    private val onboardMerchantUseCase = OnboardMerchantUseCase(eventStore, Method.METHOD_CALL)
+    private val onboardMerchantUseCase = OnboardMerchantUseCase(eventStore)
 
     @Nested
     inner class Onboard {

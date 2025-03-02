@@ -7,7 +7,6 @@ import com.michal.adapter.merchant.PostgresMerchantEventStore
 import com.michal.application.domain.merchant.MerchantEventStore
 import com.michal.application.usecase.merchant.ChangeMerchantNameUseCase
 import com.michal.application.usecase.merchant.OnboardMerchantUseCase
-import com.michal.application.usecase.merchant.OnboardMerchantUseCase.Method
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,7 +23,7 @@ class BeanConfiguration {
         fun merchantEventStore(): MerchantEventStore = PostgresMerchantEventStore(dslContext, objectMapper)
 
         @Bean
-        fun onboardMerchantUseCase() = OnboardMerchantUseCase(merchantEventStore(), Method.COMMAND)
+        fun onboardMerchantUseCase() = OnboardMerchantUseCase(merchantEventStore())
 
         @Bean
         fun changeMerchantNameUseCase() = ChangeMerchantNameUseCase(merchantEventStore())
