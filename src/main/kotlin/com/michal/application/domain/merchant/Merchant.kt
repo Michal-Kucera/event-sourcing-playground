@@ -3,6 +3,7 @@ package com.michal.application.domain.merchant
 import com.michal.application.domain.merchant.Merchant.Id
 import com.michal.application.domain.merchant.command.ChangeMerchantNameCommand
 import com.michal.application.domain.merchant.command.OnboardMerchantCommand
+import com.michal.application.domain.merchant.event.MerchantEvent
 import com.michal.application.domain.merchant.event.MerchantNameChangedEvent
 import com.michal.application.domain.merchant.event.MerchantOnboardedEvent
 import com.michal.application.domain.sharedkernel.eventsourcing.EventSourcedAggregate
@@ -11,7 +12,7 @@ import java.util.UUID
 data class Merchant private constructor(
     val id: Id,
     val name: Name,
-) : EventSourcedAggregate<Id>(streamName = "merchant", id) {
+) : EventSourcedAggregate<Id, MerchantEvent>(id) {
     fun handle(command: ChangeMerchantNameCommand): Merchant {
         require(name != command.newName) { "Cannot change merchant name to the same name" }
         append(MerchantNameChangedEvent(command.newName))
