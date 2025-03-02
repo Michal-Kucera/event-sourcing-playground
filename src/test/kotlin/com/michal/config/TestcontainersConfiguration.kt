@@ -11,5 +11,6 @@ class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
-    fun postgresContainer() = PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"))
+    fun postgresContainer(): PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"))
+        .withReuse(true)
 }

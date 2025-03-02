@@ -5,6 +5,10 @@ spring:
     compose:
       enabled: true
       file: docker-compose.yml
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://localhost:5432/event-sourcing-playground
     username: postgres

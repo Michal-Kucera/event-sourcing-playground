@@ -15,7 +15,10 @@ java {
     }
 }
 
+ext["spring-cloud.version"] = "2024.0.0"
 ext["jooq.version"] = "3.20.1"
+ext["jooq-flyway-plugin.version"] = "1.2.0"
+ext["kotest.version"] = "5.9.1"
 
 repositories {
     mavenLocal()
@@ -24,14 +27,16 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
 
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 
-    jooqCodegen("com.github.sabomichal:jooq-meta-postgres-flyway:1.2.0")
+    jooqCodegen("com.github.sabomichal:jooq-meta-postgres-flyway:${property("jooq-flyway-plugin.version")}")
     jooqCodegen("org.flywaydb:flyway-database-postgresql")
 
     runtimeOnly("org.postgresql:postgresql")
@@ -42,12 +47,13 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    testImplementation("io.kotest:kotest-assertions-core:${property("kotest.version")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}")
     }
 }
 
