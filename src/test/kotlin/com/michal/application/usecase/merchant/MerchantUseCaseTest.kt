@@ -1,4 +1,4 @@
-package com.michal.config.application.usecase.merchant
+package com.michal.application.usecase.merchant
 
 import com.michal.adapter.merchant.InMemoryMerchantEventStore
 import com.michal.application.domain.merchant.Merchant.Id
