@@ -4,13 +4,14 @@ package com.michal.adapter.merchant
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.michal.adapter.merchant.EventEnvelope.Metadata
 import com.michal.application.domain.merchant.Merchant
 import com.michal.application.domain.merchant.Merchant.Id
 import com.michal.application.domain.merchant.MerchantEvent
 import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.application.domain.merchant.MerchantEventStore
+import com.michal.application.domain.sharedkernel.eventsourcing.EventEnvelope
+import com.michal.application.domain.sharedkernel.eventsourcing.EventEnvelope.Metadata
 import com.michal.application.domain.sharedkernel.eventsourcing.EventStore.AggregateNotFound
 import com.michal.jooq.public.tables.records.EventStoreRecord
 import com.michal.jooq.public.tables.references.EVENT_STORE

@@ -1,6 +1,5 @@
-package com.michal.adapter.merchant
+package com.michal.application.domain.sharedkernel.eventsourcing
 
-import com.michal.application.domain.sharedkernel.eventsourcing.Event
 import java.time.LocalDateTime
 import java.util.UUID
 
