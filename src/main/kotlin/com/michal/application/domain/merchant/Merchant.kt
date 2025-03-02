@@ -33,6 +33,14 @@ data class Merchant private constructor(
         return this
     }
 
+    // function call instead of command handler
+    fun changeName(newName: Name): Merchant {
+        if (!name.isSameAs(newName)) {
+            append(MerchantNameChanged(aggregateId, newName))
+        }
+        return this
+    }
+
     // event-sourcing handler impl #1
     // change the state of the aggregate
     fun on(event: MerchantNameChanged): Merchant = Merchant(aggregateId, event.newName)
@@ -48,7 +56,7 @@ data class Merchant private constructor(
         fun handle(command: OnboardMerchant): Merchant = Merchant(command.id, command.name)
             .apply { append(MerchantOnboarded(command.id, command.name)) }
 
-        // without command handler
+        // function call instead of command handler
         fun onboard(id: Id, name: Name): Merchant = Merchant(id, name)
             .apply { append(MerchantOnboarded(id, name)) }
 
