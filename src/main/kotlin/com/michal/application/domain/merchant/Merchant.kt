@@ -14,8 +14,9 @@ data class Merchant private constructor(
     val name: Name,
 ) : EventSourcedAggregate<Id, MerchantEvent>(id) {
     fun handle(command: ChangeMerchantNameCommand): Merchant {
-        require(name != command.newName) { "Cannot change merchant name to the same name" }
-        append(MerchantNameChangedEvent(command.newName))
+        if (!name.isSameAs(command.newName)) {
+            append(MerchantNameChangedEvent(command.newName))
+        }
         return this
     }
 
@@ -47,6 +48,8 @@ data class Merchant private constructor(
         val name: String
     ) {
         override fun toString(): String = name
+
+        fun isSameAs(other: Name): Boolean = name == other.name
 
         companion object {
             fun of(name: String): Name {
