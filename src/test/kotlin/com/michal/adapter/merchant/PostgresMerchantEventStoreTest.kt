@@ -3,9 +3,10 @@ package com.michal.adapter.merchant
 import com.michal.application.domain.merchant.Merchant
 import com.michal.application.domain.merchant.Merchant.Id
 import com.michal.application.domain.merchant.Merchant.Name
-import com.michal.application.domain.merchant.command.ChangeMerchantNameCommand
-import com.michal.application.domain.merchant.event.MerchantNameChangedEvent
-import com.michal.application.domain.merchant.event.MerchantOnboardedEvent
+import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
+import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
+import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
+import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.config.EventSourcingApplication
 import com.michal.config.TestcontainersConfiguration
 import com.michal.jooq.public.tables.references.EVENT_STORE
@@ -36,12 +37,12 @@ class PostgresMerchantEventStoreTest(
     @Test
     fun test() {
         postgresMerchantEventStore.storeEventsFor(
-            Merchant.onboard(merchantId(), merchantName())
-                .handle(ChangeMerchantNameCommand(newMerchantName()))
+            Merchant.handle(OnboardMerchant(merchantId(), merchantName()))
+                .handle(ChangeMerchantName(newMerchantName()))
         )
         postgresMerchantEventStore.getBy(merchantId()) shouldBe Merchant
-            .on(MerchantOnboardedEvent(merchantId(), merchantName()))
-            .on(MerchantNameChangedEvent(newMerchantName()))
+            .on(MerchantOnboarded(merchantId(), merchantName()))
+            .on(MerchantNameChanged(merchantId(), newMerchantName()))
     }
 
     private fun merchantName() = Name.of("Muhammad Sow")

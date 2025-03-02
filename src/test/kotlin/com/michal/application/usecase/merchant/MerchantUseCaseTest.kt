@@ -3,9 +3,9 @@ package com.michal.application.usecase.merchant
 import com.michal.adapter.merchant.InMemoryMerchantEventStore
 import com.michal.application.domain.merchant.Merchant.Id
 import com.michal.application.domain.merchant.Merchant.Name
-import com.michal.application.domain.merchant.event.MerchantEvent
-import com.michal.application.domain.merchant.event.MerchantNameChangedEvent
-import com.michal.application.domain.merchant.event.MerchantOnboardedEvent
+import com.michal.application.domain.merchant.MerchantEvent
+import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
+import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.application.domain.sharedkernel.eventsourcing.EventStore.AggregateNotFound
 import com.michal.application.usecase.merchant.OnboardMerchantUseCase.Method
 import io.kotest.assertions.throwables.shouldThrowWithMessage
@@ -28,9 +28,7 @@ class MerchantUseCaseTest {
         fun `onboards a new merchant`() {
             onboardMerchant()
 
-            shouldContainInOrder(
-                MerchantOnboardedEvent(merchantId(), merchantName())
-            )
+            shouldContainInOrder(MerchantOnboarded(merchantId(), merchantName()))
         }
     }
 
@@ -44,8 +42,8 @@ class MerchantUseCaseTest {
             changeNameOfMerchant()
 
             shouldContainInOrder(
-                MerchantOnboardedEvent(merchantId(), merchantName()),
-                MerchantNameChangedEvent(newMerchantName())
+                MerchantOnboarded(merchantId(), merchantName()),
+                MerchantNameChanged(merchantId(), newMerchantName())
             )
         }
 

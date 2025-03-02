@@ -1,8 +1,8 @@
 package com.michal.application.usecase.merchant
 
 import com.michal.application.domain.merchant.Merchant
+import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
 import com.michal.application.domain.merchant.MerchantEventStore
-import com.michal.application.domain.merchant.command.OnboardMerchantCommand
 import com.michal.application.usecase.merchant.OnboardMerchantUseCase.Method.COMMAND
 import com.michal.application.usecase.merchant.OnboardMerchantUseCase.Method.METHOD_CALL
 
@@ -23,9 +23,7 @@ class OnboardMerchantUseCase(
     }
 
     private fun onboardMerchantViaCommandHandler(command: Command) {
-        val merchant = Merchant.handle(
-            OnboardMerchantCommand(command.merchantId, command.merchantName)
-        )
+        val merchant = Merchant.handle(OnboardMerchant(command.merchantId, command.merchantName))
         eventStore.storeEventsFor(merchant)
     }
 

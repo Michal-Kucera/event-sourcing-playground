@@ -1,3 +1,5 @@
 package com.michal.application.domain.sharedkernel.eventsourcing
 
-interface Event
+interface Event<ID> {
+    val aggregateId: ID
+}

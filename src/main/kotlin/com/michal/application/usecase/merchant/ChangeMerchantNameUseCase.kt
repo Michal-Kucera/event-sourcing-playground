@@ -1,7 +1,7 @@
 package com.michal.application.usecase.merchant
 
-import com.michal.application.domain.merchant.command.ChangeMerchantNameCommand
 import com.michal.application.domain.merchant.Merchant
+import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
 import com.michal.application.domain.merchant.MerchantEventStore
 
 class ChangeMerchantNameUseCase(
@@ -9,7 +9,7 @@ class ChangeMerchantNameUseCase(
 ) {
     operator fun invoke(command: Command) {
         val merchant = eventStore.getBy(command.merchantId)
-            .handle(ChangeMerchantNameCommand(command.newMerchantName))
+            .handle(ChangeMerchantName(command.newMerchantName))
         eventStore.storeEventsFor(merchant)
     }
 

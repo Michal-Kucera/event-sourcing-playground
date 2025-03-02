@@ -7,10 +7,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.michal.adapter.merchant.EventEnvelope.Metadata
 import com.michal.application.domain.merchant.Merchant
 import com.michal.application.domain.merchant.Merchant.Id
+import com.michal.application.domain.merchant.MerchantEvent
+import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
+import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.application.domain.merchant.MerchantEventStore
-import com.michal.application.domain.merchant.event.MerchantEvent
-import com.michal.application.domain.merchant.event.MerchantNameChangedEvent
-import com.michal.application.domain.merchant.event.MerchantOnboardedEvent
 import com.michal.application.domain.sharedkernel.eventsourcing.EventStore.AggregateNotFound
 import com.michal.jooq.public.tables.records.EventStoreRecord
 import com.michal.jooq.public.tables.references.EVENT_STORE
@@ -25,15 +25,15 @@ class PostgresMerchantEventStore(
 ) : MerchantEventStore {
 
     override fun storeEventsFor(aggregate: Merchant) {
-        var latestVersion = latestVersionFor(aggregate.id)
+        var latestVersion = latestVersionFor(aggregate)
         val unpublishedEvents = aggregate.unpublishedEvents().map {
             val eventType = when (it) {
-                is MerchantNameChangedEvent -> "MerchantNameChangedEvent"
-                is MerchantOnboardedEvent -> "MerchantOnboardedEvent"
+                is MerchantNameChanged -> "MerchantNameChanged"
+                is MerchantOnboarded -> "MerchantOnboarded"
             }
             EventEnvelope.wrap(
                 id = EventEnvelope.Id.of(UUID.randomUUID()),
-                streamId = EventEnvelope.StreamId.of("merchant-${aggregate.id}"),
+                streamId = EventEnvelope.StreamId.of("merchant-${aggregate.aggregateId}"),
                 payload = it,
                 metadata = Metadata.of(eventType),
                 version = ++latestVersion,
@@ -57,16 +57,16 @@ class PostgresMerchantEventStore(
     override fun findBy(aggregateId: Id): Merchant? = eventsFor(aggregateId)
         .fold(null) { merchant: Merchant?, storedEvent ->
             when (storedEvent) {
-                is MerchantOnboardedEvent -> Merchant.on(storedEvent)
-                is MerchantNameChangedEvent -> merchant!!.on(storedEvent)
+                is MerchantOnboarded -> Merchant.on(storedEvent)
+                is MerchantNameChanged -> merchant!!.on(storedEvent)
             }
         }
 
     override fun getBy(aggregateId: Id): Merchant = findBy(aggregateId)
         ?: throw AggregateNotFound("Merchant $aggregateId not found")
 
-    private fun latestVersionFor(aggregateId: Id): Int = dslContext.selectFrom(EVENT_STORE)
-        .where(EVENT_STORE.STREAM_ID.equal("merchant-$aggregateId"))
+    private fun latestVersionFor(aggregate: Merchant): Int = dslContext.selectFrom(EVENT_STORE)
+        .where(EVENT_STORE.STREAM_ID.equal("merchant-${aggregate.aggregateId}"))
         .orderBy(EVENT_STORE.VERSION)
         .map { it.version!! }
         .ifEmpty { listOf(0) }
@@ -78,8 +78,8 @@ class PostgresMerchantEventStore(
         .map {
             val metadata = objectMapper.readValue<EventEnvelope.Metadata>(it.metadata!!.data())
             when (metadata.eventType) {
-                "MerchantNameChangedEvent" -> objectMapper.readValue<MerchantNameChangedEvent>(it.payload!!.data())
-                "MerchantOnboardedEvent" -> objectMapper.readValue<MerchantOnboardedEvent>(it.payload!!.data())
+                "MerchantNameChanged" -> objectMapper.readValue<MerchantNameChanged>(it.payload!!.data())
+                "MerchantOnboarded" -> objectMapper.readValue<MerchantOnboarded>(it.payload!!.data())
                 else -> error("Unknown event type ${metadata.eventType}")
             }
         }

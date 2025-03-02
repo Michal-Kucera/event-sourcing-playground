@@ -7,7 +7,7 @@ import java.util.UUID
 data class EventEnvelope private constructor(
     val id: Id,
     val streamId: StreamId,
-    val payload: Event,
+    val payload: Event<out Any>,
     val metadata: Metadata,
     val version: Int,
     val createdAt: LocalDateTime
@@ -17,7 +17,7 @@ data class EventEnvelope private constructor(
         fun wrap(
             id: Id,
             streamId: StreamId,
-            payload: Event,
+            payload: Event<out Any>,
             metadata: Metadata,
             version: Int,
             createdAt: LocalDateTime
