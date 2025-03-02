@@ -16,4 +16,4 @@ import org.jooq.impl.Internal
 // -------------------------------------------------------------------------
 
 val EVENT_STORE_PKEY: UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord> = Internal.createUniqueKey(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE, DSL.name("event_store_pkey"), arrayOf(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE.ID), true)
-val UNIQUE_STREAM_VERSION: UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord> = Internal.createUniqueKey(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE, DSL.name("unique_stream_version"), arrayOf(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE.STREAM_ID, com.michal.jooq.`public`.tables.EventStore.EVENT_STORE.VERSION), true)
+val UNIQUE_STREAM_ID_VERSION: UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord> = Internal.createUniqueKey(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE, DSL.name("unique_stream_id_version"), arrayOf(com.michal.jooq.`public`.tables.EventStore.EVENT_STORE.STREAM_ID, com.michal.jooq.`public`.tables.EventStore.EVENT_STORE.VERSION), true)

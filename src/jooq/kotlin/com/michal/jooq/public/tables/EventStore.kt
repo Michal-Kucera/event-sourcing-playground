@@ -4,7 +4,7 @@
 package com.michal.jooq.`public`.tables
 
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 import kotlin.collections.Collection
@@ -13,6 +13,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.JSONB
 import org.jooq.Name
@@ -75,11 +76,6 @@ open class EventStore(
     val ID: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, UUID?> = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column <code>public.event_store.stream_id</code>.
-     */
-    val STREAM_ID: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, String?> = createField(DSL.name("stream_id"), SQLDataType.VARCHAR.nullable(false), this, "")
-
-    /**
      * The column <code>public.event_store.payload</code>.
      */
     val PAYLOAD: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, JSONB?> = createField(DSL.name("payload"), SQLDataType.JSONB.nullable(false), this, "")
@@ -90,14 +86,19 @@ open class EventStore(
     val METADATA: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, JSONB?> = createField(DSL.name("metadata"), SQLDataType.JSONB.nullable(false), this, "")
 
     /**
+     * The column <code>public.event_store.stream_id</code>.
+     */
+    val STREAM_ID: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, String?> = createField(DSL.name("stream_id"), SQLDataType.VARCHAR.nullable(false), this, "")
+
+    /**
      * The column <code>public.event_store.version</code>.
      */
     val VERSION: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, Int?> = createField(DSL.name("version"), SQLDataType.INTEGER.nullable(false), this, "")
 
     /**
-     * The column <code>public.event_store.created</code>.
+     * The column <code>public.event_store.created_at</code>.
      */
-    val CREATED: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, LocalDate?> = createField(DSL.name("created"), SQLDataType.LOCALDATE.nullable(false), this, "")
+    val CREATED_AT: TableField<com.michal.jooq.`public`.tables.records.EventStoreRecord, LocalDateTime?> = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<com.michal.jooq.`public`.tables.records.EventStoreRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<com.michal.jooq.`public`.tables.records.EventStoreRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
@@ -118,8 +119,9 @@ open class EventStore(
      */
     constructor(): this(DSL.name("event_store"), null)
     override fun getSchema(): Schema? = if (aliased()) null else com.michal.jooq.`public`.Public.PUBLIC
+    override fun getIndexes(): List<Index> = listOf(com.michal.jooq.`public`.indexes.IDX_STREAM_ID)
     override fun getPrimaryKey(): UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord> = com.michal.jooq.`public`.keys.EVENT_STORE_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord>> = listOf(com.michal.jooq.`public`.keys.UNIQUE_STREAM_VERSION)
+    override fun getUniqueKeys(): List<UniqueKey<com.michal.jooq.`public`.tables.records.EventStoreRecord>> = listOf(com.michal.jooq.`public`.keys.UNIQUE_STREAM_ID_VERSION)
     override fun `as`(alias: String): EventStore = EventStore(DSL.name(alias), this)
     override fun `as`(alias: Name): EventStore = EventStore(alias, this)
     override fun `as`(alias: Table<*>): EventStore = EventStore(alias.qualifiedName, this)

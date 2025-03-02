@@ -4,7 +4,7 @@
 package com.michal.jooq.`public`.tables.records
 
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 import org.jooq.JSONB
@@ -22,25 +22,25 @@ open class EventStoreRecord() : UpdatableRecordImpl<EventStoreRecord>(com.michal
         set(value): Unit = set(0, value)
         get(): UUID? = get(0) as UUID?
 
-    open var streamId: String?
-        set(value): Unit = set(1, value)
-        get(): String? = get(1) as String?
-
     open var payload: JSONB?
+        set(value): Unit = set(1, value)
+        get(): JSONB? = get(1) as JSONB?
+
+    open var metadata: JSONB?
         set(value): Unit = set(2, value)
         get(): JSONB? = get(2) as JSONB?
 
-    open var metadata: JSONB?
+    open var streamId: String?
         set(value): Unit = set(3, value)
-        get(): JSONB? = get(3) as JSONB?
+        get(): String? = get(3) as String?
 
     open var version: Int?
         set(value): Unit = set(4, value)
         get(): Int? = get(4) as Int?
 
-    open var created: LocalDate?
+    open var createdAt: LocalDateTime?
         set(value): Unit = set(5, value)
-        get(): LocalDate? = get(5) as LocalDate?
+        get(): LocalDateTime? = get(5) as LocalDateTime?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -51,13 +51,13 @@ open class EventStoreRecord() : UpdatableRecordImpl<EventStoreRecord>(com.michal
     /**
      * Create a detached, initialised EventStoreRecord
      */
-    constructor(id: UUID? = null, streamId: String? = null, payload: JSONB? = null, metadata: JSONB? = null, version: Int? = null, created: LocalDate? = null): this() {
+    constructor(id: UUID? = null, payload: JSONB? = null, metadata: JSONB? = null, streamId: String? = null, version: Int? = null, createdAt: LocalDateTime? = null): this() {
         this.id = id
-        this.streamId = streamId
         this.payload = payload
         this.metadata = metadata
+        this.streamId = streamId
         this.version = version
-        this.created = created
+        this.createdAt = createdAt
         resetTouchedOnNotNull()
     }
 }
