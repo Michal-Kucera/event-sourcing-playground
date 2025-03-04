@@ -27,7 +27,7 @@ data class Merchant private constructor(
     // command handler impl #2
     fun handle(command: MerchantCommand): Merchant {
         when (command) {
-            is OnboardMerchant -> error("${command::class.java.simpleName} command cannot be handled")
+            is OnboardMerchant -> error("${command.javaClass.simpleName} command cannot be handled")
             is ChangeMerchantName -> if (!name.isSameAs(command.newName)) {
                 append(MerchantNameChanged(aggregateId, command.newName))
             }
@@ -49,7 +49,7 @@ data class Merchant private constructor(
 
     // Impl #2
     fun on(event: MerchantEvent): Merchant = when (event) {
-        is MerchantOnboarded -> error("${event::class.java.simpleName} event cannot be applied")
+        is MerchantOnboarded -> error("${event.javaClass.simpleName} event cannot be applied")
         is MerchantNameChanged -> copy(name = event.newName)
     }
 
