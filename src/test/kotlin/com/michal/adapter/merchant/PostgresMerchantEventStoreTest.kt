@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.TestConstructor.AutowireMode.ALL
+import java.time.LocalDate
+import java.util.Currency
 import java.util.UUID
 
 @Import(TestcontainersConfiguration::class)
@@ -37,17 +39,48 @@ class PostgresMerchantEventStoreTest(
     @Test
     fun test() {
         postgresMerchantEventStore.storeEventsFor(
-            Merchant.handle(OnboardMerchant(merchantId(), merchantName()))
-                .handle(ChangeMerchantName(newMerchantName()))
+            Merchant
+                .handle(
+                    OnboardMerchant(
+                        id = merchantId(),
+                        platformId = UUID.fromString("5cf85b1d-e233-4045-a24a-75d5a755e3cb"),
+                        foundingDate = LocalDate.of(2020, 9, 20),
+                        platformPartnershipStartedDate = LocalDate.of(2021, 1, 5),
+                        businessTypes = listOf("Asian", "Korean"),
+                        preferredCurrency = Currency.getInstance("EUR"),
+                        paymentAccountNumberEnding = "1234",
+                        legalRepresentativePhoneEnding = "6789",
+                        countryCode = "DEU",
+                        postCode = "08320",
+                        city = "El Masnou",
+                        addressLine1 = "Carrer De Blai",
+                        addressLine2 = "A/B",
+                    )
+                )
+                .handle(ChangeMerchantName(merchantName()))
         )
         postgresMerchantEventStore.getBy(merchantId()) shouldBe Merchant
-            .on(MerchantOnboarded(merchantId(), merchantName()))
-            .on(MerchantNameChanged(merchantId(), newMerchantName()))
+            .on(
+                MerchantOnboarded(
+                    aggregateId = merchantId(),
+                    platformId = UUID.fromString("5cf85b1d-e233-4045-a24a-75d5a755e3cb"),
+                    foundingDate = LocalDate.of(2020, 9, 20),
+                    platformPartnershipStartedDate = LocalDate.of(2021, 1, 5),
+                    businessTypes = listOf("Asian", "Korean"),
+                    preferredCurrency = Currency.getInstance("EUR"),
+                    paymentAccountNumberEnding = "1234",
+                    legalRepresentativePhoneEnding = "6789",
+                    countryCode = "DEU",
+                    postCode = "08320",
+                    city = "El Masnou",
+                    addressLine1 = "Carrer De Blai",
+                    addressLine2 = "A/B",
+                )
+            )
+            .on(MerchantNameChanged(merchantId(), merchantName()))
     }
 
-    private fun merchantName() = Name.of("Muhammad Sow")
-
-    private fun newMerchantName() = Name.of("Arun Murmu")
+    private fun merchantName() = Name.of("Arun Murmu")
 
     private fun merchantId() = Id.of(UUID.fromString("c9978564-b770-43c2-9017-3e2be3e4d875"))
 }
