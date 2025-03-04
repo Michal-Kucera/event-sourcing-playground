@@ -8,7 +8,7 @@ data class EventEnvelope private constructor(
     val streamId: StreamId,
     val payload: Event<out Any>,
     val metadata: Metadata,
-    val version: Int,
+    val version: AggregateVersion,
     val createdAt: LocalDateTime
 ) {
 
@@ -18,7 +18,7 @@ data class EventEnvelope private constructor(
             streamId: StreamId,
             payload: Event<out Any>,
             metadata: Metadata,
-            version: Int,
+            version: AggregateVersion,
             createdAt: LocalDateTime
         ): EventEnvelope = EventEnvelope(id, streamId, payload, metadata, version, createdAt)
     }

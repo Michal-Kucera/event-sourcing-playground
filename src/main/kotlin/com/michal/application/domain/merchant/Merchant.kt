@@ -5,13 +5,15 @@ import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
 import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
 import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
+import com.michal.application.domain.sharedkernel.eventsourcing.AggregateVersion
 import com.michal.application.domain.sharedkernel.eventsourcing.EventSourcedAggregate
 import java.util.UUID
 
 data class Merchant private constructor(
     override val aggregateId: Id,
+    override val version: AggregateVersion,
     val name: Name,
-) : EventSourcedAggregate<Id, MerchantEvent>(aggregateId) {
+) : EventSourcedAggregate<Id, MerchantEvent>(aggregateId, version) {
 
     // command handler impl #1
     // enforce invariants, validate business rules and apply the correct events in case all rules apply
@@ -43,24 +45,28 @@ data class Merchant private constructor(
 
     // event-sourcing handler impl #1
     // change the state of the aggregate
-    fun on(event: MerchantNameChanged): Merchant = Merchant(aggregateId, event.newName)
+    fun on(event: MerchantNameChanged): Merchant = copy(name = event.newName)
 
     // Impl #2
     fun on(event: MerchantEvent): Merchant = when (event) {
         is MerchantOnboarded -> error("${event::class.java.simpleName} event cannot be applied")
-        is MerchantNameChanged -> Merchant(aggregateId, event.newName)
+        is MerchantNameChanged -> copy(name = event.newName)
     }
 
     companion object {
         // Command handler
-        fun handle(command: OnboardMerchant): Merchant = Merchant(command.id, command.name)
+        fun handle(
+            command: OnboardMerchant
+        ): Merchant = Merchant(command.id, AggregateVersion.initialVersion(), command.name)
             .apply { append(MerchantOnboarded(command.id, command.name)) }
 
         // function call instead of command handler
-        fun onboard(id: Id, name: Name): Merchant = Merchant(id, name)
+        fun onboard(id: Id, name: Name): Merchant = Merchant(id, AggregateVersion.initialVersion(), name)
             .apply { append(MerchantOnboarded(id, name)) }
 
-        fun on(event: MerchantOnboarded): Merchant = Merchant(event.aggregateId, event.name)
+        fun on(
+            event: MerchantOnboarded
+        ): Merchant = Merchant(event.aggregateId, AggregateVersion.initialVersion(), event.name)
     }
 
     data class Id private constructor(
