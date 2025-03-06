@@ -1,182 +1,55 @@
 package com.michal.application.domain.merchant
 
-import com.michal.application.domain.merchant.Merchant.Id
 import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
 import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
 import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
-import com.michal.application.domain.sharedkernel.eventsourcing.AggregateVersion
-import com.michal.application.domain.sharedkernel.eventsourcing.EventSourcedAggregate
-import java.time.LocalDate
+import org.axonframework.commandhandling.CommandHandler
+import org.axonframework.eventsourcing.EventSourcingHandler
+import org.axonframework.modelling.command.AggregateCreationPolicy.CREATE_IF_MISSING
+import org.axonframework.modelling.command.AggregateIdentifier
+import org.axonframework.modelling.command.AggregateLifecycle
+import org.axonframework.modelling.command.CreationPolicy
+import org.axonframework.spring.stereotype.Aggregate
 import java.util.Currency
 import java.util.UUID
 
-data class Merchant private constructor(
-    override val aggregateId: Id,
-    override val version: AggregateVersion,
-    val platformId: UUID,
-    val foundingDate: LocalDate?,
-    val platformPartnershipStartedDate: LocalDate?,
-    val businessTypes: List<String>,
-    val preferredCurrency: Currency,
-    val paymentAccountNumberEnding: String,
-    val legalRepresentativePhoneEnding: String,
-    val countryCode: String,
-    val postCode: String?,
-    val city: String?,
-    val addressLine1: String?,
-    val addressLine2: String?,
-    val name: Name?,
-) : EventSourcedAggregate<Id, MerchantEvent>(aggregateId, version) {
+@Aggregate
+class Merchant {
 
-    // command handler impl #1
-    // enforce invariants, validate business rules and apply the correct events in case all rules apply
-    fun handle(command: ChangeMerchantName): Merchant {
-        if (name == null || !name.isSameAs(command.newName)) {
-            append(MerchantNameChanged(aggregateId, command.newName))
-        }
-        return this
-    }
+    @AggregateIdentifier
+    private lateinit var aggregateId: Id
+    private lateinit var country: Country
+    private lateinit var currency: Currency
+    private var name: Name? = null
 
-    // command handler impl #2
-    fun handle(command: MerchantCommand): Merchant {
-        when (command) {
-            is OnboardMerchant -> error("${command.javaClass.simpleName} command cannot be handled")
-            is ChangeMerchantName -> if (name == null || !name.isSameAs(command.newName)) {
-                append(MerchantNameChanged(aggregateId, command.newName))
-            }
-        }
-        return this
-    }
-
-    // function call instead of command handler
-    fun changeName(newName: Name): Merchant {
-        if (name == null || !name.isSameAs(newName)) {
-            append(MerchantNameChanged(aggregateId, newName))
-        }
-        return this
-    }
-
-    // event-sourcing handler impl #1
-    // change the state of the aggregate
-    fun on(event: MerchantNameChanged): Merchant = copy(name = event.newName)
-
-    // Impl #2
-    fun on(event: MerchantEvent): Merchant = when (event) {
-        is MerchantOnboarded -> error("${event.javaClass.simpleName} event cannot be applied")
-        is MerchantNameChanged -> copy(name = event.newName)
-    }
-
-    companion object {
-        // Command handler
-        fun handle(
-            command: OnboardMerchant
-        ): Merchant = Merchant(
-            aggregateId = command.id,
-            version = AggregateVersion.initialVersion(),
-            platformId = command.platformId,
-            foundingDate = command.foundingDate,
-            platformPartnershipStartedDate = command.platformPartnershipStartedDate,
-            businessTypes = command.businessTypes,
-            preferredCurrency = command.preferredCurrency,
-            paymentAccountNumberEnding = command.paymentAccountNumberEnding,
-            legalRepresentativePhoneEnding = command.legalRepresentativePhoneEnding,
-            countryCode = command.countryCode,
-            postCode = command.postCode,
-            city = command.city,
-            addressLine1 = command.addressLine1,
-            addressLine2 = command.addressLine2,
-            name = null,
-        ).apply {
-            append(
-                MerchantOnboarded(
-                    aggregateId = command.id,
-                    platformId = platformId,
-                    foundingDate = foundingDate,
-                    platformPartnershipStartedDate = platformPartnershipStartedDate,
-                    businessTypes = businessTypes,
-                    preferredCurrency = preferredCurrency,
-                    paymentAccountNumberEnding = paymentAccountNumberEnding,
-                    legalRepresentativePhoneEnding = legalRepresentativePhoneEnding,
-                    countryCode = countryCode,
-                    postCode = postCode,
-                    city = city,
-                    addressLine1 = addressLine1,
-                    addressLine2 = addressLine2,
-                )
+    @CommandHandler
+    @CreationPolicy(CREATE_IF_MISSING)
+    fun handle(command: OnboardMerchant) {
+        AggregateLifecycle.apply(
+            MerchantOnboarded(
+                aggregateId = command.aggregateId,
+                country = command.country,
+                currency = command.currency,
             )
-        }
-
-        // function call instead of command handler
-        fun onboard(
-            id: Id,
-            platformId: UUID,
-            foundingDate: LocalDate?,
-            platformPartnershipStartedDate: LocalDate?,
-            businessTypes: List<String>,
-            preferredCurrency: Currency,
-            paymentAccountNumberEnding: String,
-            legalRepresentativePhoneEnding: String,
-            countryCode: String,
-            postCode: String?,
-            city: String?,
-            addressLine1: String?,
-            addressLine2: String?,
-        ): Merchant = Merchant(
-            aggregateId = id,
-            version = AggregateVersion.initialVersion(),
-            platformId = platformId,
-            foundingDate = foundingDate,
-            platformPartnershipStartedDate = platformPartnershipStartedDate,
-            businessTypes = businessTypes,
-            preferredCurrency = preferredCurrency,
-            paymentAccountNumberEnding = paymentAccountNumberEnding,
-            legalRepresentativePhoneEnding = legalRepresentativePhoneEnding,
-            countryCode = countryCode,
-            postCode = postCode,
-            city = city,
-            addressLine1 = addressLine1,
-            addressLine2 = addressLine2,
-            name = null,
-        ).apply {
-            append(
-                MerchantOnboarded(
-                    aggregateId = id,
-                    platformId = platformId,
-                    foundingDate = foundingDate,
-                    platformPartnershipStartedDate = platformPartnershipStartedDate,
-                    businessTypes = businessTypes,
-                    preferredCurrency = preferredCurrency,
-                    paymentAccountNumberEnding = paymentAccountNumberEnding,
-                    legalRepresentativePhoneEnding = legalRepresentativePhoneEnding,
-                    countryCode = countryCode,
-                    postCode = postCode,
-                    city = city,
-                    addressLine1 = addressLine1,
-                    addressLine2 = addressLine2,
-                )
-            )
-        }
-
-        fun on(
-            event: MerchantOnboarded
-        ): Merchant = Merchant(
-            aggregateId = event.aggregateId,
-            version = AggregateVersion.initialVersion(),
-            platformId = event.platformId,
-            foundingDate = event.foundingDate,
-            platformPartnershipStartedDate = event.platformPartnershipStartedDate,
-            businessTypes = event.businessTypes,
-            preferredCurrency = event.preferredCurrency,
-            paymentAccountNumberEnding = event.paymentAccountNumberEnding,
-            legalRepresentativePhoneEnding = event.legalRepresentativePhoneEnding,
-            countryCode = event.countryCode,
-            postCode = event.postCode,
-            city = event.city,
-            addressLine1 = event.addressLine1,
-            addressLine2 = event.addressLine2,
-            name = null
         )
+    }
+
+    @CommandHandler
+    fun handle(command: ChangeMerchantName) {
+        AggregateLifecycle.apply(MerchantNameChanged(aggregateId, command.newName))
+    }
+
+    @EventSourcingHandler
+    fun on(event: MerchantOnboarded) {
+        aggregateId = event.aggregateId
+        country = event.country
+        currency = event.currency
+    }
+
+    @EventSourcingHandler
+    fun on(event: MerchantNameChanged) {
+        name = event.newName
     }
 
     data class Id private constructor(
@@ -189,12 +62,31 @@ data class Merchant private constructor(
         }
     }
 
+    data class Country private constructor(val code: String) {
+        companion object {
+            private fun from(countryCode: String): Country {
+                require(countryCode.trim().length == 3) { "Country code must be in ISO-3 format" }
+                return Country(countryCode)
+            }
+
+            val GERMANY: Country = from("DEU")
+            val UNITED_STATES_OF_AMERICA: Country = from("USA")
+        }
+    }
+
+    data class Currency private constructor(val currency: java.util.Currency) {
+        companion object {
+            private fun from(currencyCode: String): Currency = Currency(java.util.Currency.getInstance(currencyCode))
+
+            val EUR: Currency = from("EUR")
+            val USD: Currency = from("USD")
+        }
+    }
+
     data class Name private constructor(
         val name: String
     ) {
         override fun toString(): String = name
-
-        fun isSameAs(other: Name): Boolean = name == other.name
 
         companion object {
             fun of(name: String): Name {

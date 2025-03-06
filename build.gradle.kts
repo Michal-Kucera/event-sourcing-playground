@@ -19,6 +19,7 @@ ext["spring-cloud.version"] = "2024.0.0"
 ext["jooq.version"] = "3.20.1"
 ext["jooq-flyway-plugin.version"] = "1.2.0"
 ext["kotest.version"] = "5.9.1"
+ext["axon.version"] = "4.11.1"
 
 repositories {
     mavenLocal()
@@ -28,6 +29,8 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.axonframework:axon-spring-boot-starter")
+    implementation("org.axonframework.extensions.kotlin:axon-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -43,6 +46,8 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.axonframework:axon-test")
+    testImplementation("org.axonframework.extensions.kotlin:axon-kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
@@ -54,6 +59,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}")
+        mavenBom("org.axonframework:axon-bom:${property("axon.version")}")
     }
 }
 

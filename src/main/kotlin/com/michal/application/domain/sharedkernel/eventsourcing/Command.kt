@@ -1,3 +1,5 @@
 package com.michal.application.domain.sharedkernel.eventsourcing
 
-interface Command
+interface Command<ID> {
+    val aggregateId: ID
+}
