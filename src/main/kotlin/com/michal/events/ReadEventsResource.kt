@@ -1,4 +1,4 @@
-package com.michal.readevents
+package com.michal.events
 
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine
 import org.springframework.web.bind.annotation.GetMapping
