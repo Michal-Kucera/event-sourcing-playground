@@ -8,18 +8,19 @@ import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
 import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
 import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
-import org.axonframework.test.aggregate.AggregateTestFixture
+import org.axonframework.extension.kotlin.test.aggregateTestFixture
+import org.axonframework.extension.kotlin.test.whenever
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class MerchantTest {
 
-    private val fixture = AggregateTestFixture(Merchant::class.java)
+    private val fixture = aggregateTestFixture<Merchant>()
 
     @Test
     fun `onboards a new merchant`() {
         fixture
-            .`when`(onboardMerchant())
+            .whenever(onboardMerchant())
             .expectSuccessfulHandlerExecution()
             .expectEvents(merchantOnboarded())
     }
@@ -28,7 +29,7 @@ class MerchantTest {
     fun `changes name of an existing merchant`() {
         fixture
             .given(merchantOnboarded())
-            .`when`(changeMerchantName())
+            .whenever(changeMerchantName())
             .expectSuccessfulHandlerExecution()
             .expectEvents(merchantNameChanged())
     }

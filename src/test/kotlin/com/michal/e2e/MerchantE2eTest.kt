@@ -3,10 +3,11 @@ package com.michal.e2e
 import com.michal.application.domain.merchant.Merchant
 import com.michal.application.domain.merchant.Merchant.Country.Companion.GERMANY
 import com.michal.application.domain.merchant.Merchant.Currency.Companion.EUR
+import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.config.EventSourcingApplication
 import com.michal.config.TestcontainersConfiguration
 import io.kotest.matchers.shouldBe
-import org.axonframework.modelling.command.Repository
+import org.axonframework.eventsourcing.eventstore.EventStorageEngine
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,7 +26,7 @@ import java.util.UUID
 @AutoConfigureMockMvc
 class MerchantE2eTest(
     private val mockMvc: MockMvc,
-    private val merchantRepository: Repository<Merchant>
+    private val eventStorageEngine: EventStorageEngine
 ) {
 
     @Test
@@ -43,13 +44,10 @@ class MerchantE2eTest(
             status { isCreated() }
         }
 
-        merchantRepository.load(merchantId()).execute {
-            it.aggregateId shouldBe Merchant.Id.of(UUID.fromString(merchantId()))
-            it.country shouldBe GERMANY
-            it.currency shouldBe EUR
-            it.name shouldBe null
-        }
+        eventStorageEngine.readEvents(merchantId().toString()).asSequence().toList().map { it.payload } shouldBe listOf(
+            MerchantOnboarded(merchantId(), GERMANY, EUR)
+        )
     }
 
-    private fun merchantId() = "19d32716-b6d8-4e54-b54a-4e44302e0df5"
+    private fun merchantId() = Merchant.Id.of(UUID.fromString("19d32716-b6d8-4e54-b54a-4e44302e0df5"))
 }
