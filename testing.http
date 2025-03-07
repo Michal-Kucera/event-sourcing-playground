@@ -1,0 +1,12 @@
+POST http://localhost:8080/merchants
+Content-Type: application/json
+
+{
+  "merchantId": "c6149393-70de-463f-9264-57dfa4f95f2c",
+  "countryCode": "DEU",
+  "currencyCode": "EUR"
+}
+
+###
+
+GET http://localhost:8080/internal/events/c6149393-70de-463f-9264-57dfa4f95f2c

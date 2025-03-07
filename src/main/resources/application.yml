@@ -13,6 +13,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/event-sourcing-playground
     username: postgres
     password: postgres
+axon:
+  serializer:
+    general: JACKSON
+  axonserver:
+    enabled: false
 logging:
   level:
     root: INFO

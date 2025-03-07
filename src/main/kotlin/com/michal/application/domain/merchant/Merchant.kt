@@ -6,26 +6,29 @@ import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
 import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.modelling.command.AggregateCreationPolicy.CREATE_IF_MISSING
+import org.axonframework.modelling.command.AggregateCreationPolicy.ALWAYS
 import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.AggregateLifecycle
+import org.axonframework.modelling.command.AggregateRoot
 import org.axonframework.modelling.command.CreationPolicy
 import org.axonframework.spring.stereotype.Aggregate
-import java.util.Currency
 import java.util.UUID
 
 @Aggregate
+@AggregateRoot
 class Merchant {
 
     @AggregateIdentifier
-    private lateinit var aggregateId: Id
-    private lateinit var country: Country
-    private lateinit var currency: Currency
-    private var name: Name? = null
+    lateinit var aggregateId: Id
+    lateinit var country: Country
+    lateinit var currency: Currency
+    var name: Name? = null
 
     @CommandHandler
-    @CreationPolicy(CREATE_IF_MISSING)
+    @CreationPolicy(ALWAYS)
     fun handle(command: OnboardMerchant) {
+        require(!::aggregateId.isInitialized) { "Merchant ${command.aggregateId} is already onboarded" }
+
         AggregateLifecycle.apply(
             MerchantOnboarded(
                 aggregateId = command.aggregateId,
@@ -41,6 +44,7 @@ class Merchant {
     }
 
     @EventSourcingHandler
+    @Suppress("unused")
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
         country = event.country
@@ -48,14 +52,15 @@ class Merchant {
     }
 
     @EventSourcingHandler
+    @Suppress("unused")
     fun on(event: MerchantNameChanged) {
         name = event.newName
     }
 
     data class Id private constructor(
-        val id: UUID
+        val value: UUID
     ) {
-        override fun toString(): String = id.toString()
+        override fun toString(): String = value.toString()
 
         companion object {
             fun of(id: UUID): Id = Id(id)
@@ -64,7 +69,7 @@ class Merchant {
 
     data class Country private constructor(val code: String) {
         companion object {
-            private fun from(countryCode: String): Country {
+            fun from(countryCode: String): Country {
                 require(countryCode.trim().length == 3) { "Country code must be in ISO-3 format" }
                 return Country(countryCode)
             }
@@ -74,9 +79,9 @@ class Merchant {
         }
     }
 
-    data class Currency private constructor(val currency: java.util.Currency) {
+    data class Currency private constructor(val code: java.util.Currency) {
         companion object {
-            private fun from(currencyCode: String): Currency = Currency(java.util.Currency.getInstance(currencyCode))
+            fun from(currencyCode: String): Currency = Currency(java.util.Currency.getInstance(currencyCode))
 
             val EUR: Currency = from("EUR")
             val USD: Currency = from("USD")
