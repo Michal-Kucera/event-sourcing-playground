@@ -36,6 +36,18 @@ class Merchant {
         applyEvent(MerchantNameChanged(aggregateId, command.newName))
     }
 
+    // Option #2 for CommandHandler
+//    @CommandHandler
+//    @CreationPolicy(CREATE_IF_MISSING)
+//    fun handle(command: MerchantCommand) = when (command) {
+//        is OnboardMerchant -> {
+//            require(!::aggregateId.isInitialized) { "Merchant ${command.aggregateId} is already onboarded" }
+//            applyEvent(MerchantOnboarded(command.aggregateId, command.country, command.currency))
+//        }
+//
+//        is ChangeMerchantName -> applyEvent(MerchantNameChanged(aggregateId, command.newName))
+//    }
+
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: MerchantOnboarded) {
@@ -49,6 +61,21 @@ class Merchant {
     fun on(event: MerchantNameChanged) {
         name = event.newName
     }
+
+    // Option #2 for EventSourcingHandler
+//    @EventSourcingHandler
+//    @Suppress("unused")
+//    fun on(event: MerchantEvent) = when (event) {
+//        is MerchantOnboarded -> {
+//            aggregateId = event.aggregateId
+//            country = event.country
+//            currency = event.currency
+//        }
+//
+//        is MerchantNameChanged -> {
+//            name = event.newName
+//        }
+//    }
 
     data class Id private constructor(
         val value: UUID
