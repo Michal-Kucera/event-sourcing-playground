@@ -27,7 +27,6 @@ class Merchant {
     @CommandHandler
     @CreationPolicy(ALWAYS)
     fun handle(command: OnboardMerchant) {
-        require(!::aggregateId.isInitialized) { "Merchant ${command.aggregateId} is already onboarded" }
         applyEvent(MerchantOnboarded(command.aggregateId, command.country, command.currency))
     }
 

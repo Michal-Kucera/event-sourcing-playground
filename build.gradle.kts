@@ -30,7 +30,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.axonframework:axon-spring-boot-starter")
+    implementation("org.axonframework:axon-spring-boot-starter") {
+        exclude(module = "axon-server-connector") // we don't need Axon Server
+    }
     implementation("org.axonframework.extensions.kotlin:axon-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-jooq")

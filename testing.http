@@ -2,11 +2,14 @@ POST http://localhost:8080/merchants
 Content-Type: application/json
 
 {
-  "merchantId": "a9c5fdcc-e5bc-4eac-b30d-27112235364a",
+  "merchantId": "3ec978bf-cf83-42cb-8117-5b255b71bac7",
   "countryCode": "DEU",
   "currencyCode": "EUR"
 }
 
+### Reprocess DLQ
+POST http://localhost:8080/internal/events/dead-letter/merchants/retry
+
 ###
 
-GET http://localhost:8080/internal/events/a9c5fdcc-e5bc-4eac-b30d-27112235364a
+GET http://localhost:8080/internal/events/ed7582b7-e4f0-43fe-87ae-8478a0c5ece0
