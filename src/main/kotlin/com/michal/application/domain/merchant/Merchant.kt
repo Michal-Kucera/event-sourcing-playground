@@ -19,10 +19,10 @@ import java.util.UUID
 class Merchant {
 
     @AggregateIdentifier
-    lateinit var aggregateId: Id
-    lateinit var country: Country
-    lateinit var currency: Currency
-    var name: Name? = null
+    private lateinit var aggregateId: Id
+    private lateinit var country: Country
+    private lateinit var currency: Currency
+    private var name: Name? = null
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
