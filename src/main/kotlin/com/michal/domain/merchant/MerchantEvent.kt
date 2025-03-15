@@ -17,5 +17,6 @@ sealed interface MerchantEvent : Event<Id> {
     data class PiiDataSubmitted(
         override val aggregateId: Id,
         val name: PiiData.Name,
+        val legalEntityIdentifiers: PiiData.LegalEntityIdentifiers,
     ) : MerchantEvent
 }

@@ -27,10 +27,13 @@ class SubmitPiiDataResource(
         SubmitPiiData(
             aggregateId = Merchant.Id.of(merchantId),
             name = PiiData.Name.of(payload.name),
+            legalEntityIdentifiers = PiiData.LegalEntityIdentifiers.of(payload.vatNumber, payload.registrationNumber),
         ),
     )
 
     data class Payload(
         val name: String,
+        val vatNumber: String?,
+        val registrationNumber: String?
     )
 }

@@ -38,7 +38,7 @@ class MerchantE2eTest(
 
         readEventsForMerchant() shouldBe listOf(
             MerchantOnboarded(merchantId(), GERMANY, EUR),
-            PiiDataSubmitted(merchantId(), merchantName())
+            PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers())
         )
     }
 
@@ -57,7 +57,9 @@ class MerchantE2eTest(
         contentType = APPLICATION_JSON
         content = """
             {
-              "name": "Paulo Merido"
+              "name": "Paulo Merido",
+              "vatNumber": "123456789",
+              "registrationNumber": "987654321"
             }
         """
     }.andExpect { status { isNoContent() } }
@@ -68,6 +70,11 @@ class MerchantE2eTest(
         .map { it.payload }
 
     private fun merchantName() = PiiData.Name.of("Paulo Merido")
+
+    private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
+        vatNumber = "123456789",
+        registrationNumber = "987654321"
+    )
 
     private fun merchantId() = Merchant.Id.of(UUID.fromString("19d32716-b6d8-4e54-b54a-4e44302e0df5"))
 }

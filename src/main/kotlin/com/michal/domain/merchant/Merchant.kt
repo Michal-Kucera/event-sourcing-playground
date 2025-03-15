@@ -33,7 +33,7 @@ class Merchant {
     @CommandHandler
     fun handle(command: SubmitPiiData) {
         require(piiData == null) { "PII data cannot be submitted multiple times" }
-        applyEvent(PiiDataSubmitted(aggregateId, command.name))
+        applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers))
     }
 
     // Option #2 for CommandHandler
@@ -47,7 +47,7 @@ class Merchant {
 //
 //        is SubmitPiiData -> {
 //            require(piiData == null) { "PII data cannot be submitted multiple times" }
-//            applyEvent(PiiDataSubmitted(aggregateId, command.name))
+//            applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers))
 //        }
 //    }
 
@@ -62,7 +62,7 @@ class Merchant {
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
-        piiData = PiiData.of(event.name)
+        piiData = PiiData.with(event.name, event.legalEntityIdentifiers)
     }
 
 //    // Option #2 for EventSourcingHandler
@@ -75,7 +75,7 @@ class Merchant {
 //            currency = event.currency
 //        }
 //
-//        is PiiDataSubmitted -> piiData = PiiData.of(event.name)
+//        is PiiDataSubmitted -> piiData = PiiData.of(event.name, event.legalEntityIdentifiers)
 //    }
 
     data class Id private constructor(
@@ -110,10 +110,14 @@ class Merchant {
     }
 
     data class PiiData private constructor(
-        val name: Name
+        val name: Name,
+        val legalEntityIdentifiers: LegalEntityIdentifiers
     ) {
         companion object {
-            fun of(name: Name): PiiData = PiiData(name)
+            fun with(
+                name: Name,
+                legalEntityIdentifiers: LegalEntityIdentifiers
+            ): PiiData = PiiData(name, legalEntityIdentifiers)
         }
 
         data class Name private constructor(
@@ -125,6 +129,24 @@ class Merchant {
                 fun of(name: String): Name {
                     require(name.isNotBlank()) { "Name cannot be blank" }
                     return Name(name)
+                }
+            }
+        }
+
+        data class LegalEntityIdentifiers private constructor(
+            val vatNumber: String?,
+            val registrationNumber: String?
+        ) {
+
+            companion object {
+                fun of(
+                    vatNumber: String?,
+                    registrationNumber: String?
+                ): LegalEntityIdentifiers {
+                    require(!vatNumber.isNullOrBlank() || !registrationNumber.isNullOrBlank()) {
+                        "At least one of VAT number or registration number must be provided"
+                    }
+                    return LegalEntityIdentifiers(vatNumber, registrationNumber)
                 }
             }
         }
