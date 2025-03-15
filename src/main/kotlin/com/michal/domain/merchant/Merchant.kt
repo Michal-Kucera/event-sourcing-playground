@@ -1,9 +1,9 @@
-package com.michal.application.domain.merchant
+package com.michal.domain.merchant
 
-import com.michal.application.domain.merchant.MerchantCommand.ChangeMerchantName
-import com.michal.application.domain.merchant.MerchantCommand.OnboardMerchant
-import com.michal.application.domain.merchant.MerchantEvent.MerchantNameChanged
-import com.michal.application.domain.merchant.MerchantEvent.MerchantOnboarded
+import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
+import com.michal.domain.merchant.MerchantCommand.SubmitPiiData
+import com.michal.domain.merchant.MerchantEvent.MerchantOnboarded
+import com.michal.domain.merchant.MerchantEvent.PiiDataSubmitted
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.extensions.kotlin.applyEvent
@@ -22,7 +22,7 @@ class Merchant {
     private lateinit var aggregateId: Id
     private lateinit var country: Country
     private lateinit var currency: Currency
-    private var name: Name? = null
+    private var piiData: PiiData? = null
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
@@ -31,8 +31,9 @@ class Merchant {
     }
 
     @CommandHandler
-    fun handle(command: ChangeMerchantName) {
-        applyEvent(MerchantNameChanged(aggregateId, command.newName))
+    fun handle(command: SubmitPiiData) {
+        require(piiData == null) { "PII data cannot be submitted multiple times" }
+        applyEvent(PiiDataSubmitted(aggregateId, command.name))
     }
 
     // Option #2 for CommandHandler
@@ -44,7 +45,10 @@ class Merchant {
 //            applyEvent(MerchantOnboarded(command.aggregateId, command.country, command.currency))
 //        }
 //
-//        is ChangeMerchantName -> applyEvent(MerchantNameChanged(aggregateId, command.newName))
+//        is SubmitPiiData -> {
+//            require(piiData == null) { "PII data cannot be submitted multiple times" }
+//            applyEvent(PiiDataSubmitted(aggregateId, command.name))
+//        }
 //    }
 
     @EventSourcingHandler
@@ -57,11 +61,11 @@ class Merchant {
 
     @EventSourcingHandler
     @Suppress("unused")
-    fun on(event: MerchantNameChanged) {
-        name = event.newName
+    fun on(event: PiiDataSubmitted) {
+        piiData = PiiData.of(event.name)
     }
 
-    // Option #2 for EventSourcingHandler
+//    // Option #2 for EventSourcingHandler
 //    @EventSourcingHandler
 //    @Suppress("unused")
 //    fun on(event: MerchantEvent) = when (event) {
@@ -71,9 +75,7 @@ class Merchant {
 //            currency = event.currency
 //        }
 //
-//        is MerchantNameChanged -> {
-//            name = event.newName
-//        }
+//        is PiiDataSubmitted -> piiData = PiiData.of(event.name)
 //    }
 
     data class Id private constructor(
@@ -107,15 +109,23 @@ class Merchant {
         }
     }
 
-    data class Name private constructor(
-        val name: String
+    data class PiiData private constructor(
+        val name: Name
     ) {
-        override fun toString(): String = name
-
         companion object {
-            fun of(name: String): Name {
-                require(name.isNotBlank()) { "Name cannot be blank" }
-                return Name(name)
+            fun of(name: Name): PiiData = PiiData(name)
+        }
+
+        data class Name private constructor(
+            val value: String
+        ) {
+            override fun toString(): String = value
+
+            companion object {
+                fun of(name: String): Name {
+                    require(name.isNotBlank()) { "Name cannot be blank" }
+                    return Name(name)
+                }
             }
         }
     }

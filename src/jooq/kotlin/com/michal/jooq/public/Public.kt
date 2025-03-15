@@ -34,6 +34,11 @@ open class Public : SchemaImpl(DSL.name("public"), DefaultCatalog.DEFAULT_CATALO
     val ASSOCIATION_VALUE_ENTRY: com.michal.jooq.`public`.tables.AssociationValueEntry get() = com.michal.jooq.`public`.tables.AssociationValueEntry.ASSOCIATION_VALUE_ENTRY
 
     /**
+     * The table <code>public.dead_letter_entry</code>.
+     */
+    val DEAD_LETTER_ENTRY: com.michal.jooq.`public`.tables.DeadLetterEntry get() = com.michal.jooq.`public`.tables.DeadLetterEntry.DEAD_LETTER_ENTRY
+
+    /**
      * The table <code>public.domain_event_entry</code>.
      */
     val DOMAIN_EVENT_ENTRY: com.michal.jooq.`public`.tables.DomainEventEntry get() = com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY
@@ -61,6 +66,7 @@ open class Public : SchemaImpl(DSL.name("public"), DefaultCatalog.DEFAULT_CATALO
 
     override fun getTables(): List<Table<*>> = listOf(
         com.michal.jooq.`public`.tables.AssociationValueEntry.ASSOCIATION_VALUE_ENTRY,
+        com.michal.jooq.`public`.tables.DeadLetterEntry.DEAD_LETTER_ENTRY,
         com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY,
         com.michal.jooq.`public`.tables.SagaEntry.SAGA_ENTRY,
         com.michal.jooq.`public`.tables.SnapshotEventEntry.SNAPSHOT_EVENT_ENTRY,

@@ -13,6 +13,11 @@ package com.michal.jooq.`public`.tables.references
 val ASSOCIATION_VALUE_ENTRY: com.michal.jooq.`public`.tables.AssociationValueEntry = com.michal.jooq.`public`.tables.AssociationValueEntry.ASSOCIATION_VALUE_ENTRY
 
 /**
+ * The table <code>public.dead_letter_entry</code>.
+ */
+val DEAD_LETTER_ENTRY: com.michal.jooq.`public`.tables.DeadLetterEntry = com.michal.jooq.`public`.tables.DeadLetterEntry.DEAD_LETTER_ENTRY
+
+/**
  * The table <code>public.domain_event_entry</code>.
  */
 val DOMAIN_EVENT_ENTRY: com.michal.jooq.`public`.tables.DomainEventEntry = com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY

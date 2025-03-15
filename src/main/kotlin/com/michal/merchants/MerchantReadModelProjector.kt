@@ -1,6 +1,6 @@
 package com.michal.merchants
 
-import com.michal.application.domain.merchant.MerchantEvent
+import com.michal.domain.merchant.MerchantEvent
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.springframework.stereotype.Component
@@ -8,6 +8,7 @@ import kotlin.random.Random
 
 @Component
 @ProcessingGroup("merchants")
+@Suppress("unused")
 class MerchantReadModelProjector {
 
     @EventHandler

@@ -1,15 +1,23 @@
+### Onboard merchant
 POST http://localhost:8080/merchants
 Content-Type: application/json
 
 {
-  "merchantId": "3ec978bf-cf83-42cb-8117-5b255b71bac7",
+  "merchantId": "fb5eb19c-6856-459e-ac6e-6cee9c1687d6",
   "countryCode": "DEU",
   "currencyCode": "EUR"
+}
+
+### Submit PII data
+POST http://localhost:8080/merchants/fb5eb19c-6856-459e-ac6e-6cee9c1687d6/pii-data
+Content-Type: application/json
+
+{
+  "name": "Yu Rivera"
 }
 
 ### Reprocess DLQ
 POST http://localhost:8080/internal/events/dead-letter/merchants/retry
 
-###
-
-GET http://localhost:8080/internal/events/ed7582b7-e4f0-43fe-87ae-8478a0c5ece0
+### Get all events
+GET http://localhost:8080/internal/events/fb5eb19c-6856-459e-ac6e-6cee9c1687d6
