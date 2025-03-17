@@ -28,7 +28,7 @@ class SubmitPiiDataResource(
         SubmitPiiData(
             aggregateId = Id.of(merchantId),
             name = PiiData.Name.of(payload.name),
-            legalEntityIdentifiers = PiiData.LegalEntityIdentifiers.of(
+            legalEntityId = PiiData.LegalEntityId.of(
                 country = Country.from(payload.countryCode),
                 vatNumber = payload.vatNumber,
                 registrationNumber = payload.registrationNumber

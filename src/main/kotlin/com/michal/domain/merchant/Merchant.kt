@@ -19,6 +19,7 @@ class Merchant {
 
     @AggregateIdentifier
     private lateinit var aggregateId: Id
+    private lateinit var platformId: PlatformId
     private lateinit var anonymizedData: AnonymizedData
     private var piiData: PiiData? = null
 
@@ -26,7 +27,7 @@ class Merchant {
     @CreationPolicy(ALWAYS)
     fun handle(command: OnboardMerchant) {
         with(command) {
-            applyEvent(MerchantOnboarded(aggregateId, legalAddress, currency, kitchenTypes))
+            applyEvent(MerchantOnboarded(aggregateId, platformId, legalAddress, currency, kitchenTypes))
         }
     }
 
@@ -37,19 +38,20 @@ class Merchant {
             "Submitted PII data has different country (${command.legalAddress.country}) " +
                     "than anonymized data (${anonymizedData.legalAddress.country})"
         }
-        applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers, command.legalAddress))
+        applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityId, command.legalAddress))
     }
 
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
+        platformId = event.platformId
         anonymizedData = AnonymizedData.create(event.legalAddress, event.currency, event.kitchenTypes)
     }
 
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
-        piiData = PiiData.with(event.name, event.legalEntityIdentifiers, event.legalAddress)
+        piiData = PiiData.with(event.name, event.legalEntityId, event.legalAddress)
     }
 }

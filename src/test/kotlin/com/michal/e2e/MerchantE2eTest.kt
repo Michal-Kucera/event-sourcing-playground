@@ -10,6 +10,7 @@ import com.michal.domain.merchant.Id
 import com.michal.domain.merchant.MerchantEvent.MerchantOnboarded
 import com.michal.domain.merchant.MerchantEvent.PiiDataSubmitted
 import com.michal.domain.merchant.PiiData
+import com.michal.domain.merchant.PlatformId
 import io.kotest.matchers.shouldBe
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine
 import org.junit.jupiter.api.Test
@@ -39,8 +40,8 @@ class MerchantE2eTest(
         submitPiiData()
 
         readEventsForMerchant() shouldBe listOf(
-            MerchantOnboarded(merchantId(), anonymizedAddress(), EUR, kitchenTypes()),
-            PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
+            MerchantOnboarded(merchantId(), platformId(), anonymizedAddress(), EUR, kitchenTypes()),
+            PiiDataSubmitted(merchantId(), merchantName(), legalEntityId(), address())
         )
     }
 
@@ -48,7 +49,9 @@ class MerchantE2eTest(
         contentType = APPLICATION_JSON
         content = """
             {
-              "merchantId": "${merchantId()}",
+              "merchantId": "19d32716-b6d8-4e54-b54a-4e44302e0df5",
+              "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
+              "merchantExternalId": "026c516959354797bd1a7bdc03e2e8c4",
               "countryCode": "DEU",
               "postCode": "08030",
               "city": "Berlin",
@@ -63,7 +66,7 @@ class MerchantE2eTest(
         """
     }.andExpect { status { isCreated() } }
 
-    private fun submitPiiData() = mockMvc.post("/merchants/{merchant-id}/pii-data", merchantId()) {
+    private fun submitPiiData() = mockMvc.post("/merchants/19d32716-b6d8-4e54-b54a-4e44302e0df5/pii-data") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -86,10 +89,15 @@ class MerchantE2eTest(
 
     private fun merchantName() = PiiData.Name.of("Paulo Merido")
 
-    private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
+    private fun legalEntityId() = PiiData.LegalEntityId.of(
         country = GERMANY,
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun platformId() = PlatformId.of(
+        platformId = UUID.fromString("e6ceecdb-5ad0-454d-a428-f9f0f873f69b"),
+        merchantExternalId = "026c516959354797bd1a7bdc03e2e8c4"
     )
 
     private fun anonymizedAddress() = AnonymizedData.LegalAddress.of(

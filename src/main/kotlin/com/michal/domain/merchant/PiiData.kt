@@ -2,20 +2,20 @@ package com.michal.domain.merchant
 
 data class PiiData private constructor(
     val name: Name,
-    val legalEntityIdentifiers: LegalEntityIdentifiers,
+    val legalEntityId: LegalEntityId,
     val legalAddress: LegalAddress
 ) {
     companion object {
         fun with(
             name: Name,
-            legalEntityIdentifiers: LegalEntityIdentifiers,
+            legalEntityId: LegalEntityId,
             legalAddress: LegalAddress
         ): PiiData {
-            require(legalEntityIdentifiers.country == legalAddress.country) {
-                "Legal entity has different country (${legalEntityIdentifiers.country}) " +
+            require(legalEntityId.country == legalAddress.country) {
+                "Legal entity has different country (${legalEntityId.country}) " +
                         "than legal address (${legalAddress.country})"
             }
-            return PiiData(name, legalEntityIdentifiers, legalAddress)
+            return PiiData(name, legalEntityId, legalAddress)
         }
     }
 
@@ -32,7 +32,7 @@ data class PiiData private constructor(
         }
     }
 
-    data class LegalEntityIdentifiers private constructor(
+    data class LegalEntityId private constructor(
         val country: Country,
         val vatNumber: String?,
         val registrationNumber: String?
@@ -43,11 +43,11 @@ data class PiiData private constructor(
                 country: Country,
                 vatNumber: String?,
                 registrationNumber: String?
-            ): LegalEntityIdentifiers {
+            ): LegalEntityId {
                 require(!vatNumber.isNullOrBlank() || !registrationNumber.isNullOrBlank()) {
                     "At least one of VAT number or registration number must be provided"
                 }
-                return LegalEntityIdentifiers(country, vatNumber, registrationNumber)
+                return LegalEntityId(country, vatNumber, registrationNumber)
             }
         }
     }

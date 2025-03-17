@@ -6,6 +6,7 @@ import com.michal.domain.merchant.Country
 import com.michal.domain.merchant.Currency
 import com.michal.domain.merchant.Id
 import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
+import com.michal.domain.merchant.PlatformId
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.PostMapping
@@ -27,6 +28,7 @@ class OnboardMerchantResource(
     ): CompletableFuture<OnboardMerchant> = commandGateway.send(
         OnboardMerchant(
             aggregateId = Id.of(payload.merchantId),
+            platformId = PlatformId.of(payload.platformId, payload.merchantExternalId),
             legalAddress = AnonymizedData.LegalAddress.of(
                 country = Country.from(payload.countryCode),
                 postCode = payload.postCode,
@@ -41,6 +43,8 @@ class OnboardMerchantResource(
 
     data class Payload(
         val merchantId: UUID,
+        val platformId: UUID,
+        val merchantExternalId: String,
         val countryCode: String,
         val postCode: String?,
         val city: String?,

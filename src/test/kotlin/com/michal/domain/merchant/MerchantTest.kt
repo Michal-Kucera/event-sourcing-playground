@@ -33,20 +33,27 @@ class MerchantTest {
             .expectEvents(piiDataSubmitted())
     }
 
-    private fun onboardMerchant() = OnboardMerchant(merchantId(), anonymizedAddress(), USD, kitchenTypes())
+    private fun onboardMerchant() =
+        OnboardMerchant(merchantId(), platformId(), anonymizedAddress(), USD, kitchenTypes())
 
-    private fun merchantOnboarded() = MerchantOnboarded(merchantId(), anonymizedAddress(), USD, kitchenTypes())
+    private fun merchantOnboarded() =
+        MerchantOnboarded(merchantId(), platformId(), anonymizedAddress(), USD, kitchenTypes())
 
-    private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityIdentifiers(), address())
+    private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityId(), address())
 
-    private fun piiDataSubmitted() = PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
+    private fun piiDataSubmitted() = PiiDataSubmitted(merchantId(), merchantName(), legalEntityId(), address())
 
     private fun merchantName() = PiiData.Name.of("Norma Gan")
 
-    private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
+    private fun legalEntityId() = PiiData.LegalEntityId.of(
         country = UNITED_STATES_OF_AMERICA,
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun platformId() = PlatformId.of(
+        platformId = UUID.fromString("e6ceecdb-5ad0-454d-a428-f9f0f873f69b"),
+        merchantExternalId = "026c516959354797bd1a7bdc03e2e8c4"
     )
 
     private fun anonymizedAddress() = AnonymizedData.LegalAddress.of(

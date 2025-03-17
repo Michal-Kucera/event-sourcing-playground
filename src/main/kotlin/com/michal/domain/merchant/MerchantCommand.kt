@@ -8,6 +8,7 @@ sealed interface MerchantCommand : Command<Id> {
 
     data class OnboardMerchant(
         @TargetAggregateIdentifier override val aggregateId: Id,
+        val platformId: PlatformId,
         val legalAddress: AnonymizedData.LegalAddress,
         val currency: Currency,
         val kitchenTypes: Set<KitchenType>
@@ -16,7 +17,7 @@ sealed interface MerchantCommand : Command<Id> {
     data class SubmitPiiData(
         @TargetAggregateIdentifier override val aggregateId: Id,
         val name: PiiData.Name,
-        val legalEntityIdentifiers: PiiData.LegalEntityIdentifiers,
+        val legalEntityId: PiiData.LegalEntityId,
         val legalAddress: PiiData.LegalAddress
     ) : MerchantCommand
 }
