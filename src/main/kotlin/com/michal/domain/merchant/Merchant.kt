@@ -35,21 +35,6 @@ class Merchant {
         applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers, command.address))
     }
 
-    // Option #2 for CommandHandler
-    //    @CommandHandler
-    //    @CreationPolicy(CREATE_IF_MISSING)
-    fun handle(command: MerchantCommand) = when (command) {
-        is OnboardMerchant -> {
-            require(!::aggregateId.isInitialized) { "Merchant ${command.aggregateId} is already onboarded" }
-            applyEvent(MerchantOnboarded(command.aggregateId, command.country, command.currency))
-        }
-
-        is SubmitPiiData -> {
-            require(piiData == null) { "PII data cannot be submitted multiple times" }
-            applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers, command.address))
-        }
-    }
-
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: MerchantOnboarded) {
@@ -62,18 +47,5 @@ class Merchant {
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
         piiData = PiiData.with(event.name, event.legalEntityIdentifiers, event.address)
-    }
-
-    // Option #2 for EventSourcingHandler
-    //    @EventSourcingHandler
-    //    @Suppress("unused")
-    fun on(event: MerchantEvent) = when (event) {
-        is MerchantOnboarded -> {
-            aggregateId = event.aggregateId
-            country = event.country
-            currency = event.currency
-        }
-
-        is PiiDataSubmitted -> piiData = PiiData.with(event.name, event.legalEntityIdentifiers, event.address)
     }
 }
