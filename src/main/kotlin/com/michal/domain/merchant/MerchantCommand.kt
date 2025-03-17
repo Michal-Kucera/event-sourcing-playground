@@ -15,5 +15,6 @@ sealed interface MerchantCommand : Command<Id> {
         @TargetAggregateIdentifier override val aggregateId: Id,
         val name: PiiData.Name,
         val legalEntityIdentifiers: PiiData.LegalEntityIdentifiers,
+        val address: PiiData.Address
     ) : MerchantCommand
 }

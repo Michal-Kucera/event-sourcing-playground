@@ -1,5 +1,6 @@
 package com.michal.domain.merchant
 
+import com.michal.domain.merchant.Country.Companion.GERMANY
 import com.michal.domain.merchant.Country.Companion.UNITED_STATES_OF_AMERICA
 import com.michal.domain.merchant.Currency.Companion.USD
 import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
@@ -36,15 +37,23 @@ class MerchantTest {
 
     private fun merchantOnboarded() = MerchantOnboarded(merchantId(), UNITED_STATES_OF_AMERICA, USD)
 
-    private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityIdentifiers())
+    private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityIdentifiers(), address())
 
-    private fun piiDataSubmitted() = PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers())
+    private fun piiDataSubmitted() = PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
 
     private fun merchantName() = PiiData.Name.of("Norma Gan")
 
     private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun address() = PiiData.Address.of(
+        country = GERMANY,
+        postCode = "08030",
+        city = "Berlin",
+        addressLine1 = "Karlstrasse 7",
+        addressLine2 = "Block 3"
     )
 
     private fun merchantId() = Id.of(UUID.fromString("9cbf676b-552b-460d-8da4-029e97ca95b7"))

@@ -2,13 +2,15 @@ package com.michal.domain.merchant
 
 data class PiiData private constructor(
     val name: Name,
-    val legalEntityIdentifiers: LegalEntityIdentifiers
+    val legalEntityIdentifiers: LegalEntityIdentifiers,
+    val address: Address
 ) {
     companion object {
         fun with(
             name: Name,
-            legalEntityIdentifiers: LegalEntityIdentifiers
-        ): PiiData = PiiData(name, legalEntityIdentifiers)
+            legalEntityIdentifiers: LegalEntityIdentifiers,
+            address: Address
+        ): PiiData = PiiData(name, legalEntityIdentifiers, address)
     }
 
     data class Name private constructor(
@@ -39,6 +41,24 @@ data class PiiData private constructor(
                 }
                 return LegalEntityIdentifiers(vatNumber, registrationNumber)
             }
+        }
+    }
+
+    data class Address private constructor(
+        val country: Country,
+        val postCode: String,
+        val city: String,
+        val addressLine1: String,
+        val addressLine2: String?,
+    ) {
+        companion object {
+            fun of(
+                country: Country,
+                postCode: String,
+                city: String,
+                addressLine1: String,
+                addressLine2: String?,
+            ): Address = Address(country, postCode, city, addressLine1, addressLine2)
         }
     }
 }

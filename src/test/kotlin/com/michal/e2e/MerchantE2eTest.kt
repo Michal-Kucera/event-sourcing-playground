@@ -38,7 +38,7 @@ class MerchantE2eTest(
 
         readEventsForMerchant() shouldBe listOf(
             MerchantOnboarded(merchantId(), GERMANY, EUR),
-            PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers())
+            PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
         )
     }
 
@@ -59,7 +59,12 @@ class MerchantE2eTest(
             {
               "name": "Paulo Merido",
               "vatNumber": "123456789",
-              "registrationNumber": "987654321"
+              "registrationNumber": "987654321",
+              "countryCode": "DEU",
+              "postCode": "08030",
+              "city": "Berlin",
+              "addressLine1": "Karlstrasse 7",
+              "addressLine2": "Block 3"
             }
         """
     }.andExpect { status { isNoContent() } }
@@ -74,6 +79,14 @@ class MerchantE2eTest(
     private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun address() = PiiData.Address.of(
+        country = GERMANY,
+        postCode = "08030",
+        city = "Berlin",
+        addressLine1 = "Karlstrasse 7",
+        addressLine2 = "Block 3"
     )
 
     private fun merchantId() = Id.of(UUID.fromString("19d32716-b6d8-4e54-b54a-4e44302e0df5"))
