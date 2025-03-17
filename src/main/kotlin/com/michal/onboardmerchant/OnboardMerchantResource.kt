@@ -1,6 +1,7 @@
 package com.michal.onboardmerchant
 
 import com.michal.domain.merchant.AnonymizedData
+import com.michal.domain.merchant.AnonymizedData.KitchenType
 import com.michal.domain.merchant.Country
 import com.michal.domain.merchant.Currency
 import com.michal.domain.merchant.Id
@@ -34,6 +35,7 @@ class OnboardMerchantResource(
                 addressLine2 = payload.addressLine2,
             ),
             currency = Currency.from(payload.currencyCode),
+            kitchenTypes = payload.kitchenTypes.map { KitchenType.of(it) }.toSet(),
         ),
     )
 
@@ -44,6 +46,7 @@ class OnboardMerchantResource(
         val city: String?,
         val addressLine1: String?,
         val addressLine2: String?,
-        val currencyCode: String
+        val currencyCode: String,
+        val kitchenTypes: Set<String>
     )
 }

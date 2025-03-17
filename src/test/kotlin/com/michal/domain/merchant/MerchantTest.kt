@@ -1,5 +1,6 @@
 package com.michal.domain.merchant
 
+import com.michal.domain.merchant.AnonymizedData.KitchenType
 import com.michal.domain.merchant.Country.Companion.UNITED_STATES_OF_AMERICA
 import com.michal.domain.merchant.Currency.Companion.USD
 import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
@@ -32,9 +33,9 @@ class MerchantTest {
             .expectEvents(piiDataSubmitted())
     }
 
-    private fun onboardMerchant() = OnboardMerchant(merchantId(), anonymizedAddress(), USD)
+    private fun onboardMerchant() = OnboardMerchant(merchantId(), anonymizedAddress(), USD, kitchenTypes())
 
-    private fun merchantOnboarded() = MerchantOnboarded(merchantId(), anonymizedAddress(), USD)
+    private fun merchantOnboarded() = MerchantOnboarded(merchantId(), anonymizedAddress(), USD, kitchenTypes())
 
     private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityIdentifiers(), address())
 
@@ -55,6 +56,8 @@ class MerchantTest {
         addressLine1 = "Trumpstreet",
         addressLine2 = null
     )
+
+    private fun kitchenTypes() = setOf(KitchenType.of("Asian"), KitchenType.of("Korean"))
 
     private fun address() = PiiData.LegalAddress.of(
         country = UNITED_STATES_OF_AMERICA,

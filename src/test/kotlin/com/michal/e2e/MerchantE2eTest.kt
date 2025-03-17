@@ -3,6 +3,7 @@ package com.michal.e2e
 import com.michal.config.EventSourcingApplication
 import com.michal.config.TestcontainersConfiguration
 import com.michal.domain.merchant.AnonymizedData
+import com.michal.domain.merchant.AnonymizedData.KitchenType
 import com.michal.domain.merchant.Country.Companion.GERMANY
 import com.michal.domain.merchant.Currency.Companion.EUR
 import com.michal.domain.merchant.Id
@@ -38,7 +39,7 @@ class MerchantE2eTest(
         submitPiiData()
 
         readEventsForMerchant() shouldBe listOf(
-            MerchantOnboarded(merchantId(), anonymizedAddress(), EUR),
+            MerchantOnboarded(merchantId(), anonymizedAddress(), EUR, kitchenTypes()),
             PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
         )
     }
@@ -53,7 +54,11 @@ class MerchantE2eTest(
               "city": "Berlin",
               "addressLine1": "Karlstrasse",
               "addressLine2": "N/A",
-              "currencyCode": "EUR"
+              "currencyCode": "EUR",
+              "kitchenTypes": [
+                "Asian",
+                "Korean"
+              ]
             }
         """
     }.andExpect { status { isCreated() } }
@@ -94,6 +99,8 @@ class MerchantE2eTest(
         addressLine1 = "Karlstrasse",
         addressLine2 = "N/A"
     )
+
+    private fun kitchenTypes() = setOf(KitchenType.of("Asian"), KitchenType.of("Korean"))
 
     private fun address() = PiiData.LegalAddress.of(
         country = GERMANY,

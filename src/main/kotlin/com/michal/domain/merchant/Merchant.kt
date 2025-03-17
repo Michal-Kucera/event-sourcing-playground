@@ -25,7 +25,9 @@ class Merchant {
     @CommandHandler
     @CreationPolicy(ALWAYS)
     fun handle(command: OnboardMerchant) {
-        applyEvent(MerchantOnboarded(command.aggregateId, command.legalAddress, command.currency))
+        with(command) {
+            applyEvent(MerchantOnboarded(aggregateId, legalAddress, currency, kitchenTypes))
+        }
     }
 
     @CommandHandler
@@ -42,7 +44,7 @@ class Merchant {
     @Suppress("unused")
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
-        anonymizedData = AnonymizedData.create(event.legalAddress, event.currency)
+        anonymizedData = AnonymizedData.create(event.legalAddress, event.currency, event.kitchenTypes)
     }
 
     @EventSourcingHandler

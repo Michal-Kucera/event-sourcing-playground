@@ -1,5 +1,6 @@
 package com.michal.domain.merchant
 
+import com.michal.domain.merchant.AnonymizedData.KitchenType
 import com.michal.domain.sharedkernel.eventsourcing.Event
 
 sealed interface MerchantEvent : Event<Id> {
@@ -8,6 +9,7 @@ sealed interface MerchantEvent : Event<Id> {
         override val aggregateId: Id,
         val legalAddress: AnonymizedData.LegalAddress,
         val currency: Currency,
+        val kitchenTypes: Set<KitchenType>
     ) : MerchantEvent
 
     data class PiiDataSubmitted(
