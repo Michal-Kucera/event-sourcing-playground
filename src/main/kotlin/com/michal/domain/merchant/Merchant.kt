@@ -20,6 +20,7 @@ class Merchant {
     @AggregateIdentifier
     private lateinit var aggregateId: Id
     private lateinit var platformId: PlatformId
+    private lateinit var currency: Currency
     private lateinit var anonymizedData: AnonymizedData
     private var piiData: PiiData? = null
 
@@ -46,7 +47,8 @@ class Merchant {
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
         platformId = event.platformId
-        anonymizedData = AnonymizedData.create(event.legalAddress, event.currency, event.kitchenTypes)
+        currency = event.currency
+        anonymizedData = AnonymizedData.create(event.legalAddress, event.kitchenTypes)
     }
 
     @EventSourcingHandler

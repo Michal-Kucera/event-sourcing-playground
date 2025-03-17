@@ -2,13 +2,12 @@ package com.michal.domain.merchant
 
 data class AnonymizedData private constructor(
     val legalAddress: LegalAddress,
-    val currency: Currency,
     val kitchenTypes: Set<KitchenType>
 ) {
     companion object {
-        fun create(legalAddress: LegalAddress, currency: Currency, kitchenTypes: Set<KitchenType>): AnonymizedData {
+        fun create(legalAddress: LegalAddress, kitchenTypes: Set<KitchenType>): AnonymizedData {
             require(kitchenTypes.isNotEmpty()) { "At least one kitchen type must be provided" }
-            return AnonymizedData(legalAddress, currency, kitchenTypes)
+            return AnonymizedData(legalAddress, kitchenTypes)
         }
     }
 
