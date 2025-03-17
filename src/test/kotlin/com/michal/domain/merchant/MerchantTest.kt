@@ -1,9 +1,7 @@
 package com.michal.domain.merchant
 
-import com.michal.domain.merchant.Merchant.Country.Companion.UNITED_STATES_OF_AMERICA
-import com.michal.domain.merchant.Merchant.Currency.Companion.USD
-import com.michal.domain.merchant.Merchant.Id
-import com.michal.domain.merchant.Merchant.PiiData
+import com.michal.domain.merchant.Country.Companion.UNITED_STATES_OF_AMERICA
+import com.michal.domain.merchant.Currency.Companion.USD
 import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
 import com.michal.domain.merchant.MerchantCommand.SubmitPiiData
 import com.michal.domain.merchant.MerchantEvent.MerchantOnboarded

@@ -1,8 +1,8 @@
 package com.michal.submitpiidata
 
-import com.michal.domain.merchant.Merchant
-import com.michal.domain.merchant.Merchant.PiiData
+import com.michal.domain.merchant.Id
 import com.michal.domain.merchant.MerchantCommand.SubmitPiiData
+import com.michal.domain.merchant.PiiData
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,7 +25,7 @@ class SubmitPiiDataResource(
         @RequestBody payload: Payload,
     ): CompletableFuture<SubmitPiiData> = commandGateway.send(
         SubmitPiiData(
-            aggregateId = Merchant.Id.of(merchantId),
+            aggregateId = Id.of(merchantId),
             name = PiiData.Name.of(payload.name),
             legalEntityIdentifiers = PiiData.LegalEntityIdentifiers.of(payload.vatNumber, payload.registrationNumber),
         ),

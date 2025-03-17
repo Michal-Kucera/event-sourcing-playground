@@ -1,6 +1,8 @@
 package com.michal.onboardmerchant
 
-import com.michal.domain.merchant.Merchant
+import com.michal.domain.merchant.Country
+import com.michal.domain.merchant.Currency
+import com.michal.domain.merchant.Id
 import com.michal.domain.merchant.MerchantCommand.OnboardMerchant
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.CREATED
@@ -22,9 +24,9 @@ class OnboardMerchantResource(
         @RequestBody payload: Payload
     ): CompletableFuture<OnboardMerchant> = commandGateway.send(
         OnboardMerchant(
-            aggregateId = Merchant.Id.of(payload.merchantId),
-            country = Merchant.Country.from(payload.countryCode),
-            currency = Merchant.Currency.from(payload.currencyCode),
+            aggregateId = Id.of(payload.merchantId),
+            country = Country.from(payload.countryCode),
+            currency = Currency.from(payload.currencyCode),
         ),
     )
 

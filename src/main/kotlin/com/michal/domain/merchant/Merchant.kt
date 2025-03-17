@@ -12,7 +12,6 @@ import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.AggregateRoot
 import org.axonframework.modelling.command.CreationPolicy
 import org.axonframework.spring.stereotype.Aggregate
-import java.util.UUID
 
 @Aggregate
 @AggregateRoot
@@ -77,78 +76,4 @@ class Merchant {
 //
 //        is PiiDataSubmitted -> piiData = PiiData.of(event.name, event.legalEntityIdentifiers)
 //    }
-
-    data class Id private constructor(
-        val value: UUID
-    ) {
-        override fun toString(): String = value.toString()
-
-        companion object {
-            fun of(id: UUID): Id = Id(id)
-        }
-    }
-
-    data class Country private constructor(val code: String) {
-        companion object {
-            fun from(countryCode: String): Country {
-                require(countryCode.trim().length == 3) { "Country code must be in ISO-3 format" }
-                return Country(countryCode)
-            }
-
-            val GERMANY: Country = from("DEU")
-            val UNITED_STATES_OF_AMERICA: Country = from("USA")
-        }
-    }
-
-    data class Currency private constructor(val code: java.util.Currency) {
-        companion object {
-            fun from(currencyCode: String): Currency = Currency(java.util.Currency.getInstance(currencyCode))
-
-            val EUR: Currency = from("EUR")
-            val USD: Currency = from("USD")
-        }
-    }
-
-    data class PiiData private constructor(
-        val name: Name,
-        val legalEntityIdentifiers: LegalEntityIdentifiers
-    ) {
-        companion object {
-            fun with(
-                name: Name,
-                legalEntityIdentifiers: LegalEntityIdentifiers
-            ): PiiData = PiiData(name, legalEntityIdentifiers)
-        }
-
-        data class Name private constructor(
-            val value: String
-        ) {
-            override fun toString(): String = value
-
-            companion object {
-                fun of(name: String): Name {
-                    require(name.isNotBlank()) { "Name cannot be blank" }
-                    return Name(name)
-                }
-            }
-        }
-
-        data class LegalEntityIdentifiers private constructor(
-            val vatNumber: String?,
-            val registrationNumber: String?
-        ) {
-
-            companion object {
-                fun of(
-                    vatNumber: String?,
-                    registrationNumber: String?
-                ): LegalEntityIdentifiers {
-                    require(!vatNumber.isNullOrBlank() || !registrationNumber.isNullOrBlank()) {
-                        "At least one of VAT number or registration number must be provided"
-                    }
-                    return LegalEntityIdentifiers(vatNumber, registrationNumber)
-                }
-            }
-        }
-    }
 }
