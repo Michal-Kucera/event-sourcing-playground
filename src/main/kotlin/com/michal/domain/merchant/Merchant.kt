@@ -22,7 +22,7 @@ class Merchant {
     private lateinit var platformId: PlatformId
     private lateinit var currency: Currency
     private lateinit var anonymizedData: AnonymizedData
-    private var piiData: PiiData? = null
+    private var piiData: PiiDataCollection = PiiDataCollection.withNoPiiData()
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
@@ -34,7 +34,7 @@ class Merchant {
 
     @CommandHandler
     fun handle(command: SubmitPiiData) {
-        require(piiData == null) { "PII data cannot be submitted multiple times" }
+        require(piiData.hasNoPiiData()) { "PII data cannot be submitted multiple times" }
         require(command.legalAddress.country == anonymizedData.legalAddress.country) {
             "Submitted PII data has different country (${command.legalAddress.country}) " +
                     "than anonymized data (${anonymizedData.legalAddress.country})"
@@ -48,12 +48,12 @@ class Merchant {
         aggregateId = event.aggregateId
         platformId = event.platformId
         currency = event.currency
-        anonymizedData = AnonymizedData.create(event.legalAddress, event.kitchenTypes)
+        anonymizedData = AnonymizedData.with(event.legalAddress, event.kitchenTypes)
     }
 
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
-        piiData = PiiData.with(event.name, event.legalEntityId, event.legalAddress)
+        piiData = piiData.add(PiiData.with(event.name, event.legalEntityId, event.legalAddress))
     }
 }
