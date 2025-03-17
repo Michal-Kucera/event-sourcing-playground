@@ -7,7 +7,7 @@ sealed interface MerchantCommand : Command<Id> {
 
     data class OnboardMerchant(
         @TargetAggregateIdentifier override val aggregateId: Id,
-        val country: Country,
+        val legalAddress: AnonymizedData.LegalAddress,
         val currency: Currency,
     ) : MerchantCommand
 

@@ -6,7 +6,7 @@ sealed interface MerchantEvent : Event<Id> {
 
     data class MerchantOnboarded(
         override val aggregateId: Id,
-        val country: Country,
+        val legalAddress: AnonymizedData.LegalAddress,
         val currency: Currency,
     ) : MerchantEvent
 

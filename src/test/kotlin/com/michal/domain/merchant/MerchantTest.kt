@@ -32,9 +32,9 @@ class MerchantTest {
             .expectEvents(piiDataSubmitted())
     }
 
-    private fun onboardMerchant() = OnboardMerchant(merchantId(), UNITED_STATES_OF_AMERICA, USD)
+    private fun onboardMerchant() = OnboardMerchant(merchantId(), anonymizedAddress(), USD)
 
-    private fun merchantOnboarded() = MerchantOnboarded(merchantId(), UNITED_STATES_OF_AMERICA, USD)
+    private fun merchantOnboarded() = MerchantOnboarded(merchantId(), anonymizedAddress(), USD)
 
     private fun submitPiiData() = SubmitPiiData(merchantId(), merchantName(), legalEntityIdentifiers(), address())
 
@@ -46,6 +46,14 @@ class MerchantTest {
         country = UNITED_STATES_OF_AMERICA,
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun anonymizedAddress() = AnonymizedData.LegalAddress.of(
+        country = UNITED_STATES_OF_AMERICA,
+        postCode = "08030",
+        city = "Washington DC",
+        addressLine1 = "Trumpstreet",
+        addressLine2 = null
     )
 
     private fun address() = PiiData.LegalAddress.of(

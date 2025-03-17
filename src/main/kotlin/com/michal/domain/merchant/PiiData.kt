@@ -66,7 +66,7 @@ data class PiiData private constructor(
                 city: String,
                 addressLine1: String,
                 addressLine2: String?,
-            ): LegalAddress = LegalAddress(country, postCode, city, addressLine1, addressLine2)
+            ) = LegalAddress(country, postCode, city, addressLine1, addressLine2)
         }
     }
 }

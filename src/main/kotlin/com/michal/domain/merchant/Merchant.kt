@@ -25,15 +25,15 @@ class Merchant {
     @CommandHandler
     @CreationPolicy(ALWAYS)
     fun handle(command: OnboardMerchant) {
-        applyEvent(MerchantOnboarded(command.aggregateId, command.country, command.currency))
+        applyEvent(MerchantOnboarded(command.aggregateId, command.legalAddress, command.currency))
     }
 
     @CommandHandler
     fun handle(command: SubmitPiiData) {
         require(piiData == null) { "PII data cannot be submitted multiple times" }
-        require(command.legalAddress.country == anonymizedData.country) {
+        require(command.legalAddress.country == anonymizedData.legalAddress.country) {
             "Submitted PII data has different country (${command.legalAddress.country}) " +
-                    "than anonymized data (${anonymizedData.country})"
+                    "than anonymized data (${anonymizedData.legalAddress.country})"
         }
         applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityIdentifiers, command.legalAddress))
     }
@@ -42,7 +42,7 @@ class Merchant {
     @Suppress("unused")
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
-        anonymizedData = AnonymizedData.create(event.country, event.currency)
+        anonymizedData = AnonymizedData.create(event.legalAddress, event.currency)
     }
 
     @EventSourcingHandler

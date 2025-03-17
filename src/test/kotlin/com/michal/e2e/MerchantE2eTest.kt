@@ -2,6 +2,7 @@ package com.michal.e2e
 
 import com.michal.config.EventSourcingApplication
 import com.michal.config.TestcontainersConfiguration
+import com.michal.domain.merchant.AnonymizedData
 import com.michal.domain.merchant.Country.Companion.GERMANY
 import com.michal.domain.merchant.Currency.Companion.EUR
 import com.michal.domain.merchant.Id
@@ -37,7 +38,7 @@ class MerchantE2eTest(
         submitPiiData()
 
         readEventsForMerchant() shouldBe listOf(
-            MerchantOnboarded(merchantId(), GERMANY, EUR),
+            MerchantOnboarded(merchantId(), anonymizedAddress(), EUR),
             PiiDataSubmitted(merchantId(), merchantName(), legalEntityIdentifiers(), address())
         )
     }
@@ -48,6 +49,10 @@ class MerchantE2eTest(
             {
               "merchantId": "${merchantId()}",
               "countryCode": "DEU",
+              "postCode": "08030",
+              "city": "Berlin",
+              "addressLine1": "Karlstrasse",
+              "addressLine2": "N/A",
               "currencyCode": "EUR"
             }
         """
@@ -80,6 +85,14 @@ class MerchantE2eTest(
         country = GERMANY,
         vatNumber = "123456789",
         registrationNumber = "987654321"
+    )
+
+    private fun anonymizedAddress() = AnonymizedData.LegalAddress.of(
+        country = GERMANY,
+        postCode = "08030",
+        city = "Berlin",
+        addressLine1 = "Karlstrasse",
+        addressLine2 = "N/A"
     )
 
     private fun address() = PiiData.LegalAddress.of(
