@@ -77,11 +77,12 @@ class MerchantE2eTest(
     private fun merchantName() = PiiData.Name.of("Paulo Merido")
 
     private fun legalEntityIdentifiers() = PiiData.LegalEntityIdentifiers.of(
+        country = GERMANY,
         vatNumber = "123456789",
         registrationNumber = "987654321"
     )
 
-    private fun address() = PiiData.Address.of(
+    private fun address() = PiiData.LegalAddress.of(
         country = GERMANY,
         postCode = "08030",
         city = "Berlin",

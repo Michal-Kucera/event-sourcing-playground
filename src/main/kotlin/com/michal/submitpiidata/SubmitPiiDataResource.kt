@@ -28,8 +28,12 @@ class SubmitPiiDataResource(
         SubmitPiiData(
             aggregateId = Id.of(merchantId),
             name = PiiData.Name.of(payload.name),
-            legalEntityIdentifiers = PiiData.LegalEntityIdentifiers.of(payload.vatNumber, payload.registrationNumber),
-            address = PiiData.Address.of(
+            legalEntityIdentifiers = PiiData.LegalEntityIdentifiers.of(
+                country = Country.from(payload.countryCode),
+                vatNumber = payload.vatNumber,
+                registrationNumber = payload.registrationNumber
+            ),
+            legalAddress = PiiData.LegalAddress.of(
                 country = Country.from(payload.countryCode),
                 postCode = payload.postCode,
                 city = payload.city,

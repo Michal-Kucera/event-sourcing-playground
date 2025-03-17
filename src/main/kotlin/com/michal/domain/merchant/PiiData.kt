@@ -3,14 +3,20 @@ package com.michal.domain.merchant
 data class PiiData private constructor(
     val name: Name,
     val legalEntityIdentifiers: LegalEntityIdentifiers,
-    val address: Address
+    val legalAddress: LegalAddress
 ) {
     companion object {
         fun with(
             name: Name,
             legalEntityIdentifiers: LegalEntityIdentifiers,
-            address: Address
-        ): PiiData = PiiData(name, legalEntityIdentifiers, address)
+            legalAddress: LegalAddress
+        ): PiiData {
+            require(legalEntityIdentifiers.country == legalAddress.country) {
+                "Legal entity has different country (${legalEntityIdentifiers.country}) " +
+                        "than legal address (${legalAddress.country})"
+            }
+            return PiiData(name, legalEntityIdentifiers, legalAddress)
+        }
     }
 
     data class Name private constructor(
@@ -27,24 +33,26 @@ data class PiiData private constructor(
     }
 
     data class LegalEntityIdentifiers private constructor(
+        val country: Country,
         val vatNumber: String?,
         val registrationNumber: String?
     ) {
 
         companion object {
             fun of(
+                country: Country,
                 vatNumber: String?,
                 registrationNumber: String?
             ): LegalEntityIdentifiers {
                 require(!vatNumber.isNullOrBlank() || !registrationNumber.isNullOrBlank()) {
                     "At least one of VAT number or registration number must be provided"
                 }
-                return LegalEntityIdentifiers(vatNumber, registrationNumber)
+                return LegalEntityIdentifiers(country, vatNumber, registrationNumber)
             }
         }
     }
 
-    data class Address private constructor(
+    data class LegalAddress private constructor(
         val country: Country,
         val postCode: String,
         val city: String,
@@ -58,7 +66,7 @@ data class PiiData private constructor(
                 city: String,
                 addressLine1: String,
                 addressLine2: String?,
-            ): Address = Address(country, postCode, city, addressLine1, addressLine2)
+            ): LegalAddress = LegalAddress(country, postCode, city, addressLine1, addressLine2)
         }
     }
 }
