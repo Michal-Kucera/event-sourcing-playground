@@ -1,7 +1,8 @@
 select lo_get(cast(payload as bigint))   as payload,
        lo_get(cast(meta_data as bigint)) as meta_data,
        *
-from domain_event_entry;
+from domain_event_entry
+order by aggregate_identifier, time_stamp;
 
 select lo_get(cast(payload as bigint))     as payload,
        lo_get(cast(meta_data as bigint))   as meta_data,

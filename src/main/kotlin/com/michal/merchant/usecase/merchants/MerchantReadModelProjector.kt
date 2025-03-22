@@ -12,15 +12,19 @@ import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.jooq.DSLContext
 import org.jooq.JSONB
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import kotlin.random.Random.Default.nextBoolean
 
 @Component
 @ProcessingGroup("merchants")
 class MerchantReadModelProjector(
     private val jooqContext: DSLContext,
     private val objectMapper: ObjectMapper,
+    @Value("\${axon.eventhandling.processors.merchants.random-failure}")
+    private val isRandomFailureEnabled: Boolean
 ) {
 
     @EventHandler
@@ -29,102 +33,109 @@ class MerchantReadModelProjector(
         event: MerchantEvent,
         @SequenceNumber sequenceNumber: Long,
     ) {
-        println("Applying ${event.javaClass.simpleName} to merchant ${event.aggregateId} projection")
+        println(
+            "Applying ${event.javaClass.simpleName} event to merchant ${event.aggregateId} projection " +
+                    "in version $sequenceNumber"
+        )
         when (event) {
-            is MerchantOnboarded -> {
-                jooqContext.insertInto(MERCHANT_PROJECTION)
-                    .set(MerchantProjectionRecord().apply {
-                        merchantId = event.aggregateId.value
-                        data = JSONB.jsonb(
-                            objectMapper.writeValueAsString(
-                                Projection(
-                                    id = event.aggregateId.value,
-                                    name = null,
-                                    platformId = event.platformId.platformId,
-                                    externalId = event.platformId.merchantExternalId,
-                                    countryCode = event.legalAddress.country.code,
-                                    postCode = event.legalAddress.postCode,
-                                    city = event.legalAddress.city,
-                                    addressLine1 = event.legalAddress.addressLine1,
-                                    addressLine2 = event.legalAddress.addressLine2,
-                                    currencyCode = event.currency.code.currencyCode,
-                                    kitchenTypes = event.kitchenTypes.map { it.value }.toSet(),
-                                    vatNumber = null,
-                                    registrationNumber = null,
-                                    latestSubmittedPiiDataVersion = 0,
-                                    latestReconciledPiiDataVersion = 0,
-                                )
-                            )
-                        )
-                        latestSequenceNumber = sequenceNumber
-                    })
-                    .execute()
-            }
-
-            is PiiDataSubmitted -> {
-                val projection = jooqContext.selectFrom(MERCHANT_PROJECTION)
-                    .where(
-                        MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value),
-                        MERCHANT_PROJECTION.LATEST_SEQUENCE_NUMBER.eq(sequenceNumber - 1)
-                    )
-                    .single()
-                val projectionData = objectMapper.readValue(projection.data!!.data(), Projection::class.java)
-                projection.data = JSONB.jsonb(
-                    objectMapper.writeValueAsString(
-                        when {
-                            event.version.isInitialVersion() -> projectionData.copy(
-                                name = event.name.value,
-                                vatNumber = event.legalEntityId.vatNumber,
-                                registrationNumber = event.legalEntityId.registrationNumber,
-                                countryCode = event.legalAddress.country.code,
-                                postCode = event.legalAddress.postCode,
-                                city = event.legalAddress.city,
-                                addressLine1 = event.legalAddress.addressLine1,
-                                addressLine2 = event.legalAddress.addressLine2,
-                                latestSubmittedPiiDataVersion = event.version.value,
-                                latestReconciledPiiDataVersion = event.version.value,
-                            )
-
-                            else -> projectionData.copy(
-                                latestSubmittedPiiDataVersion = event.version.value
-                            )
-                        }
-                    )
-                )
-                projection.latestSequenceNumber = sequenceNumber
-                projection.update()
-            }
-
-            is PiiDataReconciled -> {
-                val projection = jooqContext.selectFrom(MERCHANT_PROJECTION)
-                    .where(
-                        MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value),
-                        MERCHANT_PROJECTION.LATEST_SEQUENCE_NUMBER.eq(sequenceNumber - 1)
-                    )
-                    .single()
-                val projectionData = objectMapper.readValue(projection.data!!.data(), Projection::class.java)
-                projection.data = JSONB.jsonb(
-                    objectMapper.writeValueAsString(
-                        projectionData.copy(
-                            name = event.reconciledName.value,
-                            countryCode = event.reconciledLegalAddress.country.code,
-                            postCode = event.reconciledLegalAddress.postCode,
-                            city = event.reconciledLegalAddress.city,
-                            addressLine1 = event.reconciledLegalAddress.addressLine1,
-                            addressLine2 = event.reconciledLegalAddress.addressLine2,
-                            vatNumber = event.reconciledLegalEntityId.vatNumber,
-                            registrationNumber = event.reconciledLegalEntityId.registrationNumber,
-                            latestReconciledPiiDataVersion = event.newerVersion.value
-                        )
-                    )
-                )
-                projection.latestSequenceNumber = sequenceNumber
-                projection.update()
-            }
+            is MerchantOnboarded -> on(event, sequenceNumber)
+            is PiiDataSubmitted -> on(event, sequenceNumber)
+            is PiiDataReconciled -> on(event, sequenceNumber)
         }
-//        if (Random.nextBoolean()) {
-//            error("Merchant ${event.aggregateId} is not good!")
-//        }
+        if (isRandomFailureEnabled && nextBoolean()) {
+            error("Random failure kicks in for merchant ${event.aggregateId}!")
+        }
+    }
+
+    private fun on(event: PiiDataReconciled, sequenceNumber: Long) {
+        val projection = jooqContext.selectFrom(MERCHANT_PROJECTION)
+            .where(
+                MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value),
+                MERCHANT_PROJECTION.LATEST_SEQUENCE_NUMBER.eq(sequenceNumber - 1)
+            )
+            .single()
+        val projectionData = objectMapper.readValue(projection.data!!.data(), Projection::class.java)
+        projection.data = JSONB.jsonb(
+            objectMapper.writeValueAsString(
+                projectionData.copy(
+                    name = event.reconciledName.value,
+                    countryCode = event.reconciledLegalAddress.country.code,
+                    postCode = event.reconciledLegalAddress.postCode,
+                    city = event.reconciledLegalAddress.city,
+                    addressLine1 = event.reconciledLegalAddress.addressLine1,
+                    addressLine2 = event.reconciledLegalAddress.addressLine2,
+                    vatNumber = event.reconciledLegalEntityId.vatNumber,
+                    registrationNumber = event.reconciledLegalEntityId.registrationNumber,
+                    latestReconciledPiiDataVersion = event.newerVersion.value
+                )
+            )
+        )
+        projection.latestSequenceNumber = sequenceNumber
+        projection.update()
+    }
+
+    private fun on(event: PiiDataSubmitted, sequenceNumber: Long) {
+        val projection = jooqContext.selectFrom(MERCHANT_PROJECTION)
+            .where(
+                MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value),
+                MERCHANT_PROJECTION.LATEST_SEQUENCE_NUMBER.eq(sequenceNumber - 1)
+            )
+            .single()
+        val projectionData = objectMapper.readValue(projection.data!!.data(), Projection::class.java)
+        projection.data = JSONB.jsonb(
+            objectMapper.writeValueAsString(
+                when {
+                    event.version.isInitialVersion() -> projectionData.copy(
+                        name = event.name.value,
+                        vatNumber = event.legalEntityId.vatNumber,
+                        registrationNumber = event.legalEntityId.registrationNumber,
+                        countryCode = event.legalAddress.country.code,
+                        postCode = event.legalAddress.postCode,
+                        city = event.legalAddress.city,
+                        addressLine1 = event.legalAddress.addressLine1,
+                        addressLine2 = event.legalAddress.addressLine2,
+                        latestSubmittedPiiDataVersion = event.version.value,
+                        latestReconciledPiiDataVersion = event.version.value,
+                    )
+
+                    else -> projectionData.copy(
+                        latestSubmittedPiiDataVersion = event.version.value
+                    )
+                }
+            )
+        )
+        projection.latestSequenceNumber = sequenceNumber
+        projection.update()
+    }
+
+    private fun on(event: MerchantOnboarded, sequenceNumber: Long) {
+        jooqContext.insertInto(MERCHANT_PROJECTION)
+            .set(MerchantProjectionRecord().apply {
+                merchantId = event.aggregateId.value
+                data = JSONB.jsonb(
+                    objectMapper.writeValueAsString(
+                        Projection(
+                            id = event.aggregateId.value,
+                            name = null,
+                            platformId = event.platformId.platformId,
+                            externalId = event.platformId.merchantExternalId,
+                            countryCode = event.legalAddress.country.code,
+                            postCode = event.legalAddress.postCode,
+                            city = event.legalAddress.city,
+                            addressLine1 = event.legalAddress.addressLine1,
+                            addressLine2 = event.legalAddress.addressLine2,
+                            currencyCode = event.currency.code.currencyCode,
+                            kitchenTypes = event.kitchenTypes.map { it.value }.toSet(),
+                            vatNumber = null,
+                            registrationNumber = null,
+                            latestSubmittedPiiDataVersion = 0,
+                            latestReconciledPiiDataVersion = 0,
+                        )
+                    )
+                )
+                latestSequenceNumber = sequenceNumber
+            })
+            .execute()
     }
 
     data class Projection(

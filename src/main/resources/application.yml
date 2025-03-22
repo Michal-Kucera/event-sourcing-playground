@@ -19,6 +19,7 @@ axon:
   eventhandling:
     processors:
       merchants:
+        random-failure: false
         dlq:
           enabled: true
 logging:

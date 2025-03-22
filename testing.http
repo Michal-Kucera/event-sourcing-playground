@@ -1,4 +1,4 @@
-@merchant_id = 85d2cc23-3d09-4c51-839a-a45e2de62360
+@merchant_id = c2745850-0e33-4929-8564-7381a90a74bb
 
 ### Find all merchants
 GET http://localhost:8080/merchants
@@ -7,7 +7,7 @@ GET http://localhost:8080/merchants
 GET http://localhost:8080/merchants/{{merchant_id}}
 
 ### Find specific version of merchant's PII data
-GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/1
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/2
 
 ### Onboard merchant
 POST http://localhost:8080/merchants
