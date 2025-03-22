@@ -42,4 +42,20 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
             }
         """
     }.andExpect { status { isNoContent() } }
+
+    fun submitPiiDataV2() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+        contentType = APPLICATION_JSON
+        content = """
+            {
+              "name": "Jennifer Shinde",
+              "vatNumber": "45678901",
+              "registrationNumber": "76540987",
+              "countryCode": "USA",
+              "postCode": "08031",
+              "city": "Chicago",
+              "addressLine1": "Cali 123",
+              "addressLine2": null
+            }
+        """
+    }.andExpect { status { isNoContent() } }
 }

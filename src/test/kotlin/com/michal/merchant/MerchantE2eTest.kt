@@ -19,10 +19,12 @@ class MerchantE2eTest(
     fun `merchant lifecycle e2e test`() {
         merchantE2eClient.onboardMerchant()
         merchantE2eClient.submitPiiData()
+        merchantE2eClient.submitPiiDataV2()
 
         eventStorageEngine.readEvents(MerchantId.validStable().value) shouldBe listOf(
             MerchantOnboarded.validStable(),
-            PiiDataSubmitted.validStable()
+            PiiDataSubmitted.validStable(),
+            PiiDataSubmitted.validStableV2()
         )
     }
 }
