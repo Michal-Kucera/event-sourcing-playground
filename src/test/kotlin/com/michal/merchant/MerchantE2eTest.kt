@@ -2,6 +2,7 @@ package com.michal.merchant
 
 import com.michal.config.EventSourcingApplication
 import com.michal.config.TestcontainersConfiguration
+import com.michal.config.events.readEvents
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.MerchantId
@@ -32,7 +33,7 @@ class MerchantE2eTest(
         onboardMerchant()
         submitPiiData()
 
-        readEventsForMerchant() shouldBe listOf(
+        eventStorageEngine.readEvents(MerchantId.validStable().value) shouldBe listOf(
             MerchantOnboarded.validStable(),
             PiiDataSubmitted.validStable()
         )
@@ -74,9 +75,4 @@ class MerchantE2eTest(
             }
         """
     }.andExpect { status { isNoContent() } }
-
-    private fun readEventsForMerchant() = eventStorageEngine.readEvents(MerchantId.validStable().toString())
-        .asSequence()
-        .toList()
-        .map { it.payload }
 }
