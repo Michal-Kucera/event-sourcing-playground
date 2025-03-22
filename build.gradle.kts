@@ -54,6 +54,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.awaitility:awaitility-kotlin")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("io.kotest:kotest-assertions-core:${property("kotest.version")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

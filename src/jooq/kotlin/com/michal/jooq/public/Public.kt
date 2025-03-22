@@ -44,6 +44,11 @@ open class Public : SchemaImpl(DSL.name("public"), DefaultCatalog.DEFAULT_CATALO
     val DOMAIN_EVENT_ENTRY: com.michal.jooq.`public`.tables.DomainEventEntry get() = com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY
 
     /**
+     * The table <code>public.merchant_projection</code>.
+     */
+    val MERCHANT_PROJECTION: com.michal.jooq.`public`.tables.MerchantProjection get() = com.michal.jooq.`public`.tables.MerchantProjection.MERCHANT_PROJECTION
+
+    /**
      * The table <code>public.saga_entry</code>.
      */
     val SAGA_ENTRY: com.michal.jooq.`public`.tables.SagaEntry get() = com.michal.jooq.`public`.tables.SagaEntry.SAGA_ENTRY
@@ -68,6 +73,7 @@ open class Public : SchemaImpl(DSL.name("public"), DefaultCatalog.DEFAULT_CATALO
         com.michal.jooq.`public`.tables.AssociationValueEntry.ASSOCIATION_VALUE_ENTRY,
         com.michal.jooq.`public`.tables.DeadLetterEntry.DEAD_LETTER_ENTRY,
         com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY,
+        com.michal.jooq.`public`.tables.MerchantProjection.MERCHANT_PROJECTION,
         com.michal.jooq.`public`.tables.SagaEntry.SAGA_ENTRY,
         com.michal.jooq.`public`.tables.SnapshotEventEntry.SNAPSHOT_EVENT_ENTRY,
         com.michal.jooq.`public`.tables.TokenEntry.TOKEN_ENTRY

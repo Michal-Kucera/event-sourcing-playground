@@ -9,3 +9,6 @@ select lo_get(cast(payload as bigint))     as payload,
        lo_get(cast(token as bigint))       as token,
        *
 from dead_letter_entry;
+
+select *
+from merchant_projection;

@@ -1,4 +1,10 @@
-@merchant_id = b1754398-2f5f-4019-a6ad-d1afc2244a2e
+@merchant_id = 85d2cc23-3d09-4c51-839a-a45e2de62360
+
+### Find all merchants
+GET http://localhost:8080/merchants
+
+### Find merchant by ID
+GET http://localhost:8080/merchants/{{merchant_id}}
 
 ### Onboard merchant
 POST http://localhost:8080/merchants

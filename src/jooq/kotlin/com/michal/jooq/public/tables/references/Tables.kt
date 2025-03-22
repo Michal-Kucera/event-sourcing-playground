@@ -23,6 +23,11 @@ val DEAD_LETTER_ENTRY: com.michal.jooq.`public`.tables.DeadLetterEntry = com.mic
 val DOMAIN_EVENT_ENTRY: com.michal.jooq.`public`.tables.DomainEventEntry = com.michal.jooq.`public`.tables.DomainEventEntry.DOMAIN_EVENT_ENTRY
 
 /**
+ * The table <code>public.merchant_projection</code>.
+ */
+val MERCHANT_PROJECTION: com.michal.jooq.`public`.tables.MerchantProjection = com.michal.jooq.`public`.tables.MerchantProjection.MERCHANT_PROJECTION
+
+/**
  * The table <code>public.saga_entry</code>.
  */
 val SAGA_ENTRY: com.michal.jooq.`public`.tables.SagaEntry = com.michal.jooq.`public`.tables.SagaEntry.SAGA_ENTRY

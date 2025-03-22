@@ -7,6 +7,8 @@ import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.MerchantId
 import io.kotest.matchers.shouldBe
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.untilAsserted
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine
 import org.junit.jupiter.api.Test
 
@@ -18,6 +20,9 @@ class MerchantE2eTest(
 
     @Test
     fun `merchant lifecycle e2e test`() {
+        merchantE2eClient.fetchEmptyMerchants()
+        merchantE2eClient.fetchMerchantByIdFailsWith404()
+
         merchantE2eClient.onboardMerchant()
         merchantE2eClient.submitPiiDataV1()
         merchantE2eClient.submitPiiDataV2()
@@ -33,5 +38,8 @@ class MerchantE2eTest(
             PiiDataSubmitted.validStableV3(),
             PiiDataReconciled.validStableV2(),
         )
+
+        await untilAsserted { merchantE2eClient.fetchMerchants() }
+        await untilAsserted { merchantE2eClient.fetchMerchantById() }
     }
 }

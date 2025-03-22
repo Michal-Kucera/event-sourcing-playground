@@ -1,7 +1,9 @@
 package com.michal.merchant
 
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.test.json.JsonCompareMode.STRICT
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 class MerchantE2eClient(private val mockMvc: MockMvc) {
@@ -110,4 +112,89 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
             }
         """
     }.andExpect { status { isNoContent() } }
+
+    fun fetchEmptyMerchants() = mockMvc.get("/merchants") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json("[]", STRICT)
+        }
+        status { isOk() }
+    }
+
+    fun fetchMerchants() = mockMvc.get("/merchants") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json(
+                """
+                    [
+                      {
+                        "id": "9cbf676b-552b-460d-8da4-029e97ca95b7",
+                        "name": "Jennifer Shinde",
+                        "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
+                        "externalId": "026c516959354797bd1a7bdc03e2e8c4",
+                        "countryCode": "USA",
+                        "postCode": "08032",
+                        "city":  "San Francisco",
+                        "addressLine1": "Sesame street 33",
+                        "addressLine2":  "2nd floor",
+                        "currencyCode": "USD",
+                        "kitchenTypes": [
+                          "Korean",
+                          "Asian"
+                        ],
+                        "vatNumber": "45678901",
+                        "registrationNumber":  "76540987",
+                        "latestSubmittedPiiDataVersion": 3,
+                        "latestReconciledPiiDataVersion":  3
+                      }
+                    ]
+                """,
+                STRICT
+            )
+        }
+        status { isOk() }
+    }
+
+    fun fetchMerchantByIdFailsWith404() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
+        accept = APPLICATION_JSON
+    }.andExpect { status { isNotFound() } }
+
+    fun fetchMerchantById() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json(
+                """
+                    {
+                      "id": "9cbf676b-552b-460d-8da4-029e97ca95b7",
+                      "name": "Jennifer Shinde",
+                      "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
+                      "externalId": "026c516959354797bd1a7bdc03e2e8c4",
+                      "countryCode": "USA",
+                      "postCode": "08032",
+                      "city":  "San Francisco",
+                      "addressLine1": "Sesame street 33",
+                      "addressLine2":  "2nd floor",
+                      "currencyCode": "USD",
+                      "kitchenTypes": [
+                        "Korean",
+                        "Asian"
+                      ],
+                      "vatNumber": "45678901",
+                      "registrationNumber":  "76540987",
+                      "latestSubmittedPiiDataVersion": 3,
+                      "latestReconciledPiiDataVersion":  3
+                    }
+                """,
+                STRICT
+            )
+        }
+        status { isOk() }
+        header { string("X-LATEST-SEQUENCE-NUMBER", "5") }
+    }
 }
