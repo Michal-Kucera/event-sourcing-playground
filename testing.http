@@ -1,23 +1,106 @@
+@merchant_id = b1754398-2f5f-4019-a6ad-d1afc2244a2e
+
 ### Onboard merchant
 POST http://localhost:8080/merchants
 Content-Type: application/json
 
 {
-  "merchantId": "fb5eb19c-6856-459e-ac6e-6cee9c1687d6",
-  "countryCode": "DEU",
-  "currencyCode": "EUR"
+  "merchantId": "{{merchant_id}}",
+  "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
+  "merchantExternalId": "026c516959354797bd1a7bdc03e2e8c4",
+  "countryCode": "USA",
+  "postCode": "08030",
+  "city": "Washington DC",
+  "addressLine1": "Trumpstreet",
+  "addressLine2": null,
+  "currencyCode": "USD",
+  "kitchenTypes": [
+    "Korean",
+    "Asian"
+  ]
 }
 
-### Submit PII data
-POST http://localhost:8080/merchants/fb5eb19c-6856-459e-ac6e-6cee9c1687d6/pii-data
+### Submit PII data V1
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
 Content-Type: application/json
 
 {
-  "name": "Yu Rivera"
+  "name": "Paulo Merido",
+  "vatNumber": "123456789",
+  "registrationNumber": "987654321",
+  "countryCode": "USA",
+  "postCode": "08030",
+  "city": "Washington DC",
+  "addressLine1": "Trumpstreet 4",
+  "addressLine2": "Block 1"
+}
+
+### Submit PII data V2
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
+Content-Type: application/json
+
+{
+  "name": "Jennifer Shinde",
+  "vatNumber": "45678901",
+  "registrationNumber": "76540987",
+  "countryCode": "USA",
+  "postCode": "08031",
+  "city": "Chicago",
+  "addressLine1": "Cali 123",
+  "addressLine2": null
+}
+
+### Submit PII data V3
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
+Content-Type: application/json
+
+{
+  "name": "Mona Chauhan",
+  "vatNumber": "98754567",
+  "registrationNumber": "345678987",
+  "countryCode": "USA",
+  "postCode": "08032",
+  "city": "San Francisco",
+  "addressLine1": "Sesame street 33",
+  "addressLine2": "2nd floor"
+}
+
+### Reconcile PII data V1 - V2
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data/reconcile
+Content-Type: application/json
+
+{
+  "olderVersion": 1,
+  "newerVersion": 2,
+  "reconciledName": "Jennifer Shinde",
+  "reconciledVatNumber": "45678901",
+  "reconciledRegistrationNumber": "76540987",
+  "reconciledCountryCode": "USA",
+  "reconciledPostCode": "08031",
+  "reconciledCity": "Chicago",
+  "reconciledAddressLine1": "Cali 123",
+  "reconciledAddressLine2": null
+}
+
+### Reconcile PII data V2 - V3
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data/reconcile
+Content-Type: application/json
+
+{
+  "olderVersion": 2,
+  "newerVersion": 3,
+  "reconciledName": "Jennifer Shinde",
+  "reconciledVatNumber": "45678901",
+  "reconciledRegistrationNumber": "76540987",
+  "reconciledCountryCode": "USA",
+  "reconciledPostCode": "08032",
+  "reconciledCity": "San Francisco",
+  "reconciledAddressLine1": "Sesame street 33",
+  "reconciledAddressLine2": "2nd floor"
 }
 
 ### Reprocess DLQ
 POST http://localhost:8080/internal/events/dead-letter/merchants/retry
 
 ### Get all events
-GET http://localhost:8080/internal/events/fb5eb19c-6856-459e-ac6e-6cee9c1687d6
+GET http://localhost:8080/internal/events/{{merchant_id}}
