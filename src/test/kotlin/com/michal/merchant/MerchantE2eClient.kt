@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.post
 
 class MerchantE2eClient(private val mockMvc: MockMvc) {
 
-    fun onboardMerchant() = mockMvc.post("/merchants") {
+    fun canOnboardMerchant() = mockMvc.post("/merchants") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -29,7 +29,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         """
     }.andExpect { status { isCreated() } }
 
-    fun submitPiiDataV1() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+    fun canSubmitPiiDataInVersion1() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -45,7 +45,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         """
     }.andExpect { status { isNoContent() } }
 
-    fun submitPiiDataV2() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+    fun canSubmitPiiDataInVersion2() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -61,7 +61,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         """
     }.andExpect { status { isNoContent() } }
 
-    fun submitPiiDataV3() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+    fun canSubmitPiiDataInVersion3() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -77,9 +77,10 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         """
     }.andExpect { status { isNoContent() } }
 
-    fun reconcilePiiDataV1AndV2() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
-        contentType = APPLICATION_JSON
-        content = """
+    fun canReconcilePiiDataInVersion1And2() =
+        mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
+            contentType = APPLICATION_JSON
+            content = """
             {
               "olderVersion": 1,
               "newerVersion": 2,
@@ -93,11 +94,12 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
               "reconciledAddressLine2": null
             }
         """
-    }.andExpect { status { isNoContent() } }
+        }.andExpect { status { isNoContent() } }
 
-    fun reconcilePiiDataV2AndV3() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
-        contentType = APPLICATION_JSON
-        content = """
+    fun canReconcilePiiDataInVersion2And3() =
+        mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
+            contentType = APPLICATION_JSON
+            content = """
             {
               "olderVersion": 2,
               "newerVersion": 3,
@@ -111,9 +113,9 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
               "reconciledAddressLine2": "2nd floor"
             }
         """
-    }.andExpect { status { isNoContent() } }
+        }.andExpect { status { isNoContent() } }
 
-    fun fetchEmptyMerchants() = mockMvc.get("/merchants") {
+    fun getsEmptyResponseWhenFetchingEmptyMerchants() = mockMvc.get("/merchants") {
         accept = APPLICATION_JSON
     }.andExpect {
         content {
@@ -123,7 +125,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         status { isOk() }
     }
 
-    fun fetchMerchants() = mockMvc.get("/merchants") {
+    fun canFetchMerchants() = mockMvc.get("/merchants") {
         accept = APPLICATION_JSON
     }.andExpect {
         content {
@@ -159,11 +161,95 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         status { isOk() }
     }
 
-    fun fetchMerchantByIdFailsWith404() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
-        accept = APPLICATION_JSON
-    }.andExpect { status { isNotFound() } }
+    fun gets404WhenFetchingPiiDataVersionThatDoesNotExist(version: Int) =
+        mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/$version") {
+            accept = APPLICATION_JSON
+        }.andExpect { status { isNotFound() } }
 
-    fun fetchMerchantById() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
+    fun canFetchPiiDataInVersion1() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/1") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json(
+                """
+                  {
+                    "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
+                    "version": 1,
+                    "name": "Paulo Merido",
+                    "vatNumber": "123456789",
+                    "registrationNumber": "987654321",
+                    "countryCode": "USA",
+                    "postCode": "08030",
+                    "city": "Washington DC",
+                    "addressLine1": "Trumpstreet 4",
+                    "addressLine2": "Block 1"
+                  }
+                """,
+                STRICT
+            )
+        }
+        status { isOk() }
+    }
+
+    fun canFetchPiiDataInVersion2() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/2") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json(
+                """
+                  {
+                    "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
+                    "version": 2,
+                    "name": "Jennifer Shinde",
+                    "vatNumber": "45678901",
+                    "registrationNumber": "76540987",
+                    "countryCode": "USA",
+                    "postCode": "08031",
+                    "city": "Chicago",
+                    "addressLine1": "Cali 123",
+                    "addressLine2": null
+                  }
+                """,
+                STRICT
+            )
+        }
+        status { isOk() }
+    }
+
+    fun canFetchPiiDataInVersion3() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/3") {
+        accept = APPLICATION_JSON
+    }.andExpect {
+        content {
+            contentType(APPLICATION_JSON)
+            json(
+                """
+                  {
+                    "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
+                    "version": 3,
+                    "name": "Mona Chauhan",
+                    "vatNumber": "98754567",
+                    "registrationNumber": "345678987",
+                    "countryCode": "USA",
+                    "postCode": "08032",
+                    "city": "San Francisco",
+                    "addressLine1": "Sesame street 33",
+                    "addressLine2": "2nd floor"
+                  }
+                """,
+                STRICT
+            )
+        }
+        status { isOk() }
+    }
+
+    fun gets404WhenFetchMerchantByIdThatDoesNotExist() =
+        mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
+            accept = APPLICATION_JSON
+        }.andExpect { status { isNotFound() } }
+
+    fun canFetchMerchantById() = mockMvc.get("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7") {
         accept = APPLICATION_JSON
     }.andExpect {
         content {

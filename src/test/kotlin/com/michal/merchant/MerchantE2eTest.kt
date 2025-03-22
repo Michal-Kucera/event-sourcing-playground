@@ -19,17 +19,35 @@ class MerchantE2eTest(
 ) {
 
     @Test
-    fun `merchant lifecycle e2e test`() {
-        merchantE2eClient.fetchEmptyMerchants()
-        merchantE2eClient.fetchMerchantByIdFailsWith404()
+    fun `merchant lifecycle e2e test`() = with(merchantE2eClient) {
+        getsEmptyResponseWhenFetchingEmptyMerchants()
+        gets404WhenFetchMerchantByIdThatDoesNotExist()
 
-        merchantE2eClient.onboardMerchant()
-        merchantE2eClient.submitPiiDataV1()
-        merchantE2eClient.submitPiiDataV2()
-        merchantE2eClient.reconcilePiiDataV1AndV2()
-        merchantE2eClient.submitPiiDataV3()
-        merchantE2eClient.reconcilePiiDataV2AndV3()
+        canOnboardMerchant()
 
+        gets404WhenFetchingPiiDataVersionThatDoesNotExist(version = 1)
+        canSubmitPiiDataInVersion1()
+        await untilAsserted { canFetchPiiDataInVersion1() }
+
+        gets404WhenFetchingPiiDataVersionThatDoesNotExist(version = 2)
+        canSubmitPiiDataInVersion2()
+        await untilAsserted { canFetchPiiDataInVersion2() }
+
+        canReconcilePiiDataInVersion1And2()
+
+        gets404WhenFetchingPiiDataVersionThatDoesNotExist(version = 3)
+        canSubmitPiiDataInVersion3()
+        await untilAsserted { canFetchPiiDataInVersion3() }
+
+        canReconcilePiiDataInVersion2And3()
+
+        await untilAsserted { canFetchMerchants() }
+        await untilAsserted { canFetchMerchantById() }
+
+        verifyEventStoreContainsAllEvents()
+    }
+
+    private fun verifyEventStoreContainsAllEvents() {
         eventStorageEngine.readEvents(MerchantId.validStable().value) shouldBe listOf(
             MerchantOnboarded.validStable(),
             PiiDataSubmitted.validStable(),
@@ -38,8 +56,5 @@ class MerchantE2eTest(
             PiiDataSubmitted.validStableV3(),
             PiiDataReconciled.validStableV2(),
         )
-
-        await untilAsserted { merchantE2eClient.fetchMerchants() }
-        await untilAsserted { merchantE2eClient.fetchMerchantById() }
     }
 }
