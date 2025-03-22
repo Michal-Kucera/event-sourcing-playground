@@ -6,6 +6,9 @@ GET http://localhost:8080/merchants
 ### Find merchant by ID
 GET http://localhost:8080/merchants/{{merchant_id}}
 
+### Find specific version of merchant's PII data
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/1
+
 ### Onboard merchant
 POST http://localhost:8080/merchants
 Content-Type: application/json
