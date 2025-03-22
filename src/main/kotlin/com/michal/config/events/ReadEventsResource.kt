@@ -12,7 +12,7 @@ class ReadEventsResource(
 ) {
 
     @GetMapping("/internal/events/{aggregateId}")
-    fun resolveEvents(
+    fun readEvents(
         @PathVariable("aggregateId") aggregateId: UUID
     ) = eventStorageEngine.readEvents(aggregateId.toString()).asSequence().toList()
 }

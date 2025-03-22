@@ -4,7 +4,7 @@ import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.AnonymizedData.KitchenType
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
-import com.michal.sharedkernel.event.Command
+import com.michal.sharedkernel.eventsourcing.Command
 import com.michal.sharedkernel.valueobject.Currency
 import com.michal.sharedkernel.valueobject.PlatformId
 import org.axonframework.modelling.command.TargetAggregateIdentifier

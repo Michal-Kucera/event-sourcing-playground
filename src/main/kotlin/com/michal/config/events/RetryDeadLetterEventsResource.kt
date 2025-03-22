@@ -11,7 +11,7 @@ class RetryDeadLetterEventsResource(
 ) {
 
     @PostMapping("/internal/events/dead-letter/{processing-group}/retry")
-    fun resolveEvents(
+    fun retryEvents(
         @PathVariable("processing-group") processingGroup: String
     ) = eventProcessingConfiguration.sequencedDeadLetterProcessor(processingGroup)
         .orElseThrow { error("No DLQ configured for processing group $processingGroup") }
