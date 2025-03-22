@@ -29,4 +29,21 @@ sealed interface MerchantCommand : Command<MerchantId> {
     ) : MerchantCommand {
         companion object
     }
+
+    data class ReconcilePiiData(
+        @TargetAggregateIdentifier override val aggregateId: MerchantId,
+        val olderVersion: PiiData.Version,
+        val newerVersion: PiiData.Version,
+        val reconciledName: PiiData.Name,
+        val reconciledLegalEntityId: PiiData.LegalEntityId,
+        val reconciledLegalAddress: PiiData.LegalAddress
+    ) : MerchantCommand {
+        init {
+            require(olderVersion.canBeReconciledWith(newerVersion)) {
+                "Cannot reconcile $olderVersion version with $newerVersion because they are not consequent versions"
+            }
+        }
+
+        companion object
+    }
 }

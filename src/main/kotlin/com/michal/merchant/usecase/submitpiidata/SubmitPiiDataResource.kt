@@ -1,9 +1,9 @@
 package com.michal.merchant.usecase.submitpiidata
 
-import com.michal.sharedkernel.valueobject.Country
-import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
+import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
+import com.michal.sharedkernel.valueobject.Country
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.web.bind.annotation.PathVariable

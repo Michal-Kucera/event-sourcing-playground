@@ -3,8 +3,10 @@
 package com.michal.merchant
 
 import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
+import com.michal.merchant.domain.command.MerchantCommand.ReconcilePiiData
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
+import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.AnonymizedData.KitchenType
@@ -102,6 +104,24 @@ fun PiiDataSubmitted.Companion.validStableV2() = PiiDataSubmitted(
     )
 )
 
+fun PiiDataSubmitted.Companion.validStableV3() = PiiDataSubmitted(
+    MerchantId.validStable(),
+    Version.of(3),
+    PiiData.Name.of("Mona Chauhan"),
+    PiiData.LegalEntityId.of(
+        country = UNITED_STATES_OF_AMERICA,
+        vatNumber = "98754567",
+        registrationNumber = "345678987"
+    ),
+    PiiData.LegalAddress.of(
+        country = UNITED_STATES_OF_AMERICA,
+        postCode = "08032",
+        city = "San Francisco",
+        addressLine1 = "Sesame street 33",
+        addressLine2 = "2nd floor"
+    )
+)
+
 fun PiiData.Name.Companion.validStable() = PiiData.Name.of("Paulo Merido")
 
 fun PiiData.LegalEntityId.Companion.validStable(
@@ -120,4 +140,40 @@ fun PiiData.LegalAddress.Companion.validStable(
     city = "Washington DC",
     addressLine1 = "Trumpstreet 4",
     addressLine2 = "Block 1"
+)
+
+fun ReconcilePiiData.Companion.validStable() = ReconcilePiiData(
+    MerchantId.validStable(),
+    PiiDataSubmitted.validStable().version,
+    PiiDataSubmitted.validStableV2().version,
+    PiiDataSubmitted.validStableV2().name,
+    PiiDataSubmitted.validStableV2().legalEntityId,
+    PiiDataSubmitted.validStableV2().legalAddress
+)
+
+fun ReconcilePiiData.Companion.validStableV2() = ReconcilePiiData(
+    MerchantId.validStable(),
+    PiiDataSubmitted.validStableV2().version,
+    PiiDataSubmitted.validStableV3().version,
+    PiiDataSubmitted.validStableV3().name,
+    PiiDataSubmitted.validStableV3().legalEntityId,
+    PiiDataSubmitted.validStableV3().legalAddress
+)
+
+fun PiiDataReconciled.Companion.validStable() = PiiDataReconciled(
+    MerchantId.validStable(),
+    PiiDataSubmitted.validStable().version,
+    PiiDataSubmitted.validStableV2().version,
+    PiiDataSubmitted.validStableV2().name,
+    PiiDataSubmitted.validStableV2().legalEntityId,
+    PiiDataSubmitted.validStableV2().legalAddress
+)
+
+fun PiiDataReconciled.Companion.validStableV2() = PiiDataReconciled(
+    MerchantId.validStable(),
+    PiiDataSubmitted.validStableV2().version,
+    PiiDataSubmitted.validStableV3().version,
+    PiiDataSubmitted.validStableV2().name,
+    PiiDataSubmitted.validStableV2().legalEntityId,
+    PiiDataSubmitted.validStableV3().legalAddress
 )

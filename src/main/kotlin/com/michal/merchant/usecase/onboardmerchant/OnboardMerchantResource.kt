@@ -1,11 +1,11 @@
 package com.michal.merchant.usecase.onboardmerchant
 
+import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
 import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.AnonymizedData.KitchenType
+import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.sharedkernel.valueobject.Country
 import com.michal.sharedkernel.valueobject.Currency
-import com.michal.merchant.domain.valueobject.MerchantId
-import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
 import com.michal.sharedkernel.valueobject.PlatformId
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.CREATED

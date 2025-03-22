@@ -8,7 +8,6 @@ import kotlin.random.Random
 
 @Component
 @ProcessingGroup("merchants")
-@Suppress("unused")
 class MerchantReadModelProjector {
 
     @EventHandler

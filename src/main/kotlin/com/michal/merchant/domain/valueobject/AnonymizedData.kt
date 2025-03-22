@@ -6,6 +6,8 @@ data class AnonymizedData private constructor(
     val legalAddress: LegalAddress,
     val kitchenTypes: Set<KitchenType>
 ) {
+    fun hasSame(country: Country) = country == legalAddress.country
+
     companion object {
         fun with(legalAddress: LegalAddress, kitchenTypes: Set<KitchenType>): AnonymizedData {
             require(kitchenTypes.isNotEmpty()) { "At least one kitchen type must be provided" }

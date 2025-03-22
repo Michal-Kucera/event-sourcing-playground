@@ -27,7 +27,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         """
     }.andExpect { status { isCreated() } }
 
-    fun submitPiiData() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+    fun submitPiiDataV1() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
         contentType = APPLICATION_JSON
         content = """
             {
@@ -55,6 +55,58 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
               "city": "Chicago",
               "addressLine1": "Cali 123",
               "addressLine2": null
+            }
+        """
+    }.andExpect { status { isNoContent() } }
+
+    fun submitPiiDataV3() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data") {
+        contentType = APPLICATION_JSON
+        content = """
+            {
+              "name": "Mona Chauhan",
+              "vatNumber": "98754567",
+              "registrationNumber": "345678987",
+              "countryCode": "USA",
+              "postCode": "08032",
+              "city": "San Francisco",
+              "addressLine1": "Sesame street 33",
+              "addressLine2": "2nd floor"
+            }
+        """
+    }.andExpect { status { isNoContent() } }
+
+    fun reconcilePiiDataV1AndV2() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
+        contentType = APPLICATION_JSON
+        content = """
+            {
+              "olderVersion": 1,
+              "newerVersion": 2,
+              "reconciledName": "Jennifer Shinde",
+              "reconciledVatNumber": "45678901",
+              "reconciledRegistrationNumber": "76540987",
+              "reconciledCountryCode": "USA",
+              "reconciledPostCode": "08031",
+              "reconciledCity": "Chicago",
+              "reconciledAddressLine1": "Cali 123",
+              "reconciledAddressLine2": null
+            }
+        """
+    }.andExpect { status { isNoContent() } }
+
+    fun reconcilePiiDataV2AndV3() = mockMvc.post("/merchants/9cbf676b-552b-460d-8da4-029e97ca95b7/pii-data/reconcile") {
+        contentType = APPLICATION_JSON
+        content = """
+            {
+              "olderVersion": 2,
+              "newerVersion": 3,
+              "reconciledName": "Jennifer Shinde",
+              "reconciledVatNumber": "45678901",
+              "reconciledRegistrationNumber": "76540987",
+              "reconciledCountryCode": "USA",
+              "reconciledPostCode": "08032",
+              "reconciledCity": "San Francisco",
+              "reconciledAddressLine1": "Sesame street 33",
+              "reconciledAddressLine2": "2nd floor"
             }
         """
     }.andExpect { status { isNoContent() } }

@@ -25,10 +25,16 @@ data class PiiData private constructor(
 
     data class Version private constructor(
         val value: Int
-    ) {
+    ) : Comparable<Version> {
+        override fun compareTo(other: Version): Int = other.value.compareTo(other.value)
+
         override fun toString(): String = value.toString()
 
+        fun isInitialVersion() = this == initial()
+
         fun next() = of(value + 1)
+
+        fun canBeReconciledWith(otherVersion: Version) = next() == otherVersion
 
         companion object {
             fun of(version: Int): Version {
