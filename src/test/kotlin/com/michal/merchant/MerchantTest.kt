@@ -41,7 +41,7 @@ class MerchantTest {
         }
 
         @Test
-        fun `cannot submit PII data with country different than anonymized data's country`() {
+        fun `fails when submitting PII data with country different than anonymized data's country`() {
             fixture
                 .given(MerchantOnboarded.validStable(UNITED_STATES_OF_AMERICA))
                 .whenever(SubmitPiiData.validStable(GERMANY))
@@ -53,7 +53,7 @@ class MerchantTest {
         }
 
         @Test
-        fun `can submit PII data multiple times`() {
+        fun `submits new version of PII data`() {
             fixture
                 .given(
                     MerchantOnboarded.validStable(),
