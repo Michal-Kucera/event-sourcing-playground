@@ -28,6 +28,8 @@ data class PiiData private constructor(
     ) {
         override fun toString(): String = value.toString()
 
+        fun next() = of(value + 1)
+
         companion object {
             fun of(version: Int): Version {
                 require(version > 0) { "Version must be higher or equal to 0" }

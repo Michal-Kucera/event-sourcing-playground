@@ -53,16 +53,15 @@ class MerchantTest {
         }
 
         @Test
-        fun `cannot submit PII data multiple times`() {
+        fun `can submit PII data multiple times`() {
             fixture
                 .given(
                     MerchantOnboarded.validStable(),
                     PiiDataSubmitted.validStable()
                 )
-                .whenever(SubmitPiiData.validStable())
-                .expectException(IllegalArgumentException::class.java)
-                .expectExceptionMessage("PII data cannot be submitted multiple times")
-                .expectNoEvents()
+                .whenever(SubmitPiiData.validStableV2())
+                .expectSuccessfulHandlerExecution()
+                .expectEvents(PiiDataSubmitted.validStableV2())
         }
     }
 }

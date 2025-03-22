@@ -7,7 +7,6 @@ import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
-import com.michal.merchant.domain.valueobject.PiiData.Version
 import com.michal.merchant.domain.valueobject.PiiDataCollection
 import com.michal.sharedkernel.valueobject.Currency
 import com.michal.sharedkernel.valueobject.PlatformId
@@ -41,7 +40,6 @@ class Merchant {
 
     @CommandHandler
     fun handle(command: SubmitPiiData) {
-        require(piiData.hasNoPiiData()) { "PII data cannot be submitted multiple times" }
         require(command.legalAddress.country == anonymizedData.legalAddress.country) {
             "Submitted PII data has different country (${command.legalAddress.country}) " +
                     "than anonymized data (${anonymizedData.legalAddress.country})"
@@ -49,7 +47,7 @@ class Merchant {
         applyEvent(
             PiiDataSubmitted(
                 aggregateId,
-                Version.initial(),
+                piiData.nextVersion(),
                 command.name,
                 command.legalEntityId,
                 command.legalAddress
@@ -70,6 +68,6 @@ class Merchant {
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
-        piiData = piiData.add(PiiData.with(Version.initial(), event.name, event.legalEntityId, event.legalAddress))
+        piiData = piiData.add(PiiData.with(event.version, event.name, event.legalEntityId, event.legalAddress))
     }
 }

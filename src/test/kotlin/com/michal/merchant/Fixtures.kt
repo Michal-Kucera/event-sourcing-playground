@@ -24,7 +24,7 @@ fun OnboardMerchant.Companion.validStable() = OnboardMerchant(
     PlatformId.validStable(),
     AnonymizedData.LegalAddress.validStable(),
     USD,
-    KitchenType.validStableSet()
+    KitchenType.validStable()
 )
 
 fun MerchantOnboarded.Companion.validStable(
@@ -34,7 +34,7 @@ fun MerchantOnboarded.Companion.validStable(
     PlatformId.validStable(),
     AnonymizedData.LegalAddress.validStable(country),
     USD,
-    KitchenType.validStableSet()
+    KitchenType.validStable()
 )
 
 fun AnonymizedData.LegalAddress.Companion.validStable(
@@ -47,14 +47,14 @@ fun AnonymizedData.LegalAddress.Companion.validStable(
     addressLine2 = null
 )
 
-fun KitchenType.Companion.validStableSet() = setOf(KitchenType.of("Korean"), KitchenType.of("Asian"))
+fun KitchenType.Companion.validStable() = setOf(KitchenType.of("Korean"), KitchenType.of("Asian"))
 
 fun SubmitPiiData.Companion.validStable(
     country: Country = UNITED_STATES_OF_AMERICA,
 ) = SubmitPiiData(
     MerchantId.validStable(),
     PiiData.Name.validStable(),
-    PiiData.LegalEntityId.validStable(),
+    PiiData.LegalEntityId.validStable(country),
     PiiData.LegalAddress.validStable(country)
 )
 
@@ -66,10 +66,48 @@ fun PiiDataSubmitted.Companion.validStable() = PiiDataSubmitted(
     PiiData.LegalAddress.validStable()
 )
 
+fun SubmitPiiData.Companion.validStableV2(
+) = SubmitPiiData(
+    MerchantId.validStable(),
+    PiiData.Name.of("Jennifer Shinde"),
+    PiiData.LegalEntityId.of(
+        country = UNITED_STATES_OF_AMERICA,
+        vatNumber = "45678901",
+        registrationNumber = "76540987"
+    ),
+    PiiData.LegalAddress.of(
+        country = UNITED_STATES_OF_AMERICA,
+        postCode = "08031",
+        city = "Chicago",
+        addressLine1 = "Cali 123",
+        addressLine2 = null
+    )
+)
+
+fun PiiDataSubmitted.Companion.validStableV2() = PiiDataSubmitted(
+    MerchantId.validStable(),
+    Version.of(2),
+    PiiData.Name.of("Jennifer Shinde"),
+    PiiData.LegalEntityId.of(
+        country = UNITED_STATES_OF_AMERICA,
+        vatNumber = "45678901",
+        registrationNumber = "76540987"
+    ),
+    PiiData.LegalAddress.of(
+        country = UNITED_STATES_OF_AMERICA,
+        postCode = "08031",
+        city = "Chicago",
+        addressLine1 = "Cali 123",
+        addressLine2 = null
+    )
+)
+
 fun PiiData.Name.Companion.validStable() = PiiData.Name.of("Paulo Merido")
 
-fun PiiData.LegalEntityId.Companion.validStable() = PiiData.LegalEntityId.of(
-    country = UNITED_STATES_OF_AMERICA,
+fun PiiData.LegalEntityId.Companion.validStable(
+    country: Country = UNITED_STATES_OF_AMERICA
+) = PiiData.LegalEntityId.of(
+    country = country,
     vatNumber = "123456789",
     registrationNumber = "987654321"
 )
