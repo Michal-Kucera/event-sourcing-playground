@@ -22,7 +22,7 @@ class Merchant {
     private lateinit var platformId: PlatformId
     private lateinit var currency: Currency
     private lateinit var anonymizedData: AnonymizedData
-    private var piiData: PiiDataCollection = PiiDataCollection.withNoPiiData()
+    private lateinit var piiData: PiiDataCollection
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
@@ -49,6 +49,7 @@ class Merchant {
         platformId = event.platformId
         currency = event.currency
         anonymizedData = AnonymizedData.with(event.legalAddress, event.kitchenTypes)
+        piiData = PiiDataCollection.withNoPiiData()
     }
 
     @EventSourcingHandler
