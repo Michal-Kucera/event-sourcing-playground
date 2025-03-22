@@ -10,6 +10,7 @@ import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.AnonymizedData.KitchenType
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
+import com.michal.merchant.domain.valueobject.PiiData.Version
 import com.michal.sharedkernel.validStable
 import com.michal.sharedkernel.valueobject.Country
 import com.michal.sharedkernel.valueobject.Country.Companion.UNITED_STATES_OF_AMERICA
@@ -59,6 +60,7 @@ fun SubmitPiiData.Companion.validStable(
 
 fun PiiDataSubmitted.Companion.validStable() = PiiDataSubmitted(
     MerchantId.validStable(),
+    Version.initial(),
     PiiData.Name.validStable(),
     PiiData.LegalEntityId.validStable(),
     PiiData.LegalAddress.validStable()

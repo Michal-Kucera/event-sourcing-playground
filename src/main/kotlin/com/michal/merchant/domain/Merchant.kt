@@ -7,6 +7,7 @@ import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
+import com.michal.merchant.domain.valueobject.PiiData.Version
 import com.michal.merchant.domain.valueobject.PiiDataCollection
 import com.michal.sharedkernel.valueobject.Currency
 import com.michal.sharedkernel.valueobject.PlatformId
@@ -45,7 +46,15 @@ class Merchant {
             "Submitted PII data has different country (${command.legalAddress.country}) " +
                     "than anonymized data (${anonymizedData.legalAddress.country})"
         }
-        applyEvent(PiiDataSubmitted(aggregateId, command.name, command.legalEntityId, command.legalAddress))
+        applyEvent(
+            PiiDataSubmitted(
+                aggregateId,
+                Version.initial(),
+                command.name,
+                command.legalEntityId,
+                command.legalAddress
+            )
+        )
     }
 
     @EventSourcingHandler
@@ -61,6 +70,6 @@ class Merchant {
     @EventSourcingHandler
     @Suppress("unused")
     fun on(event: PiiDataSubmitted) {
-        piiData = piiData.add(PiiData.with(event.name, event.legalEntityId, event.legalAddress))
+        piiData = piiData.add(PiiData.with(Version.initial(), event.name, event.legalEntityId, event.legalAddress))
     }
 }

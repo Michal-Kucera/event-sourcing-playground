@@ -3,12 +3,14 @@ package com.michal.merchant.domain.valueobject
 import com.michal.sharedkernel.valueobject.Country
 
 data class PiiData private constructor(
+    val version: Version,
     val name: Name,
     val legalEntityId: LegalEntityId,
-    val legalAddress: LegalAddress
+    val legalAddress: LegalAddress,
 ) {
     companion object {
         fun with(
+            version: Version,
             name: Name,
             legalEntityId: LegalEntityId,
             legalAddress: LegalAddress
@@ -17,7 +19,22 @@ data class PiiData private constructor(
                 "Legal entity has different country (${legalEntityId.country}) " +
                         "than legal address (${legalAddress.country})"
             }
-            return PiiData(name, legalEntityId, legalAddress)
+            return PiiData(version, name, legalEntityId, legalAddress)
+        }
+    }
+
+    data class Version private constructor(
+        val value: Int
+    ) {
+        override fun toString(): String = value.toString()
+
+        companion object {
+            fun of(version: Int): Version {
+                require(version > 0) { "Version must be higher or equal to 0" }
+                return Version(version)
+            }
+
+            fun initial() = of(1)
         }
     }
 
