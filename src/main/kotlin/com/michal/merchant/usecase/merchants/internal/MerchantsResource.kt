@@ -1,6 +1,10 @@
-package com.michal.merchant.usecase.merchants
+package com.michal.merchant.usecase.merchants.internal
 
 import com.michal.merchant.domain.valueobject.MerchantId
+import com.michal.merchant.usecase.merchants.MerchantByIdReadModel
+import com.michal.merchant.usecase.merchants.MerchantByIdReadModelQuery
+import com.michal.merchant.usecase.merchants.MerchantsReadModel
+import com.michal.merchant.usecase.merchants.MerchantsReadModelQuery
 import org.axonframework.extensions.kotlin.queryMany
 import org.axonframework.extensions.kotlin.queryOptional
 import org.axonframework.queryhandling.QueryGateway
@@ -18,7 +22,7 @@ class MerchantsResource(
 
     @GetMapping("/merchants")
     fun findAllMerchants() = queryGateway
-        .queryMany<MerchantsReadModel, MerchantsReadModelQuery>(MerchantsReadModelQuery)
+        .queryMany<MerchantsReadModel, MerchantsReadModelQuery>(MerchantsReadModelQuery())
         .thenApply { ok(it) }
         .get()
 

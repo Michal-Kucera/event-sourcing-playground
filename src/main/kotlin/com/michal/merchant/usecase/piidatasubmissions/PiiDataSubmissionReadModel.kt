@@ -1,34 +1,15 @@
 package com.michal.merchant.usecase.piidatasubmissions
 
-import com.michal.merchant.domain.event.MerchantEvent
+import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
-import org.axonframework.eventsourcing.eventstore.EventStore
-import org.axonframework.queryhandling.QueryHandler
-import org.springframework.stereotype.Component
-import java.util.Optional
+import com.michal.sharedkernel.eventsourcing.Query
 import java.util.UUID
-
-@Component
-class PiiDataSubmissionReadModelQueryHandler(
-    private val eventStore: EventStore
-) {
-
-    @QueryHandler
-    fun handleQuery(query: PiiDataSubmissionReadModelQuery): Optional<PiiDataSubmissionReadModel> = eventStore
-        .readEvents(query.merchantId.toString())
-        .asSequence()
-        .map { it.payload }
-        .filterIsInstance<MerchantEvent.PiiDataSubmitted>()
-        .firstOrNull { it.version == query.version }
-        ?.let { PiiDataSubmissionReadModel.apply(it) }
-        .let { Optional.ofNullable(it) }
-}
 
 data class PiiDataSubmissionReadModelQuery(
     val merchantId: MerchantId,
     val version: PiiData.Version
-)
+) : Query
 
 data class PiiDataSubmissionReadModel(
     val merchantId: UUID,
@@ -44,7 +25,7 @@ data class PiiDataSubmissionReadModel(
 ) {
 
     companion object {
-        fun apply(event: MerchantEvent.PiiDataSubmitted) = PiiDataSubmissionReadModel(
+        fun apply(event: PiiDataSubmitted) = PiiDataSubmissionReadModel(
             merchantId = event.aggregateId.value,
             version = event.version.value,
             name = event.name.value,
