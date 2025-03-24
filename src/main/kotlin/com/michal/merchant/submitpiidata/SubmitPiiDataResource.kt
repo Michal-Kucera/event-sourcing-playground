@@ -1,4 +1,4 @@
-package com.michal.merchant.usecase.submitpiidata
+package com.michal.merchant.submitpiidata
 
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
 import com.michal.merchant.domain.valueobject.MerchantId

@@ -1,4 +1,4 @@
-package com.michal.merchant.usecase.reconcilepiidata
+package com.michal.merchant.reconcilepiidata
 
 import com.michal.merchant.domain.command.MerchantCommand.ReconcilePiiData
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData

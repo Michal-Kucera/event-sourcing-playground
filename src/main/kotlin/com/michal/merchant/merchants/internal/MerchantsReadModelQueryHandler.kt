@@ -1,10 +1,10 @@
-package com.michal.merchant.usecase.merchants.internal
+package com.michal.merchant.merchants.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.michal.jooq.public.tables.references.MERCHANT_PROJECTION
-import com.michal.merchant.usecase.merchants.internal.MerchantReadModelProjector.Projection
-import com.michal.merchant.usecase.merchants.MerchantsReadModel
-import com.michal.merchant.usecase.merchants.MerchantsReadModelQuery
+import com.michal.merchant.merchants.internal.MerchantReadModelProjector.Projection
+import com.michal.merchant.merchants.MerchantsReadModel
+import com.michal.merchant.merchants.MerchantsReadModelQuery
 import org.axonframework.queryhandling.QueryHandler
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component

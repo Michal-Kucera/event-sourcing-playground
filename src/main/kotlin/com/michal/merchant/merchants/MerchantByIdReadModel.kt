@@ -1,8 +1,8 @@
-package com.michal.merchant.usecase.merchants
+package com.michal.merchant.merchants
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.michal.merchant.domain.valueobject.MerchantId
-import com.michal.merchant.usecase.merchants.internal.MerchantReadModelProjector.Projection
+import com.michal.merchant.merchants.internal.MerchantReadModelProjector.Projection
 import com.michal.sharedkernel.eventsourcing.Query
 import java.util.UUID
 

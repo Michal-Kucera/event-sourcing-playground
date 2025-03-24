@@ -1,6 +1,6 @@
-package com.michal.merchant.usecase.merchants
+package com.michal.merchant.merchants
 
-import com.michal.merchant.usecase.merchants.internal.MerchantReadModelProjector.Projection
+import com.michal.merchant.merchants.internal.MerchantReadModelProjector.Projection
 import com.michal.sharedkernel.eventsourcing.Query
 import java.util.UUID
 

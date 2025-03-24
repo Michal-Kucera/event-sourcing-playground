@@ -1,4 +1,4 @@
-package com.michal.merchant.usecase.onboardmerchant
+package com.michal.merchant.onboardmerchant
 
 import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
 import com.michal.merchant.domain.valueobject.AnonymizedData

@@ -1,8 +1,8 @@
-package com.michal.merchant.usecase.piidatasubmissions.internal
+package com.michal.merchant.piidatasubmissions.internal
 
 import com.michal.merchant.domain.event.MerchantEvent
-import com.michal.merchant.usecase.piidatasubmissions.PiiDataSubmissionReadModel
-import com.michal.merchant.usecase.piidatasubmissions.PiiDataSubmissionReadModelQuery
+import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModel
+import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModelQuery
 import org.axonframework.eventsourcing.eventstore.EventStore
 import org.axonframework.queryhandling.QueryHandler
 import org.springframework.stereotype.Component

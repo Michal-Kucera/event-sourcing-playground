@@ -1,4 +1,4 @@
-package com.michal.merchant.usecase.piidatasubmissions
+package com.michal.merchant.piidatasubmissions
 
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import com.michal.merchant.domain.valueobject.MerchantId
