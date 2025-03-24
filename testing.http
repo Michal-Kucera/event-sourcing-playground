@@ -1,13 +1,7 @@
-@merchant_id = a7272acd-8007-41dd-8ef0-01f69f29eaa5
+@merchant_id = 5e9dc1f5-b7ad-495b-a6e0-e5134accecbe
 
 ### Find all merchants
 GET http://localhost:8080/merchants
-
-### Find merchant by ID
-GET http://localhost:8080/merchants/{{merchant_id}}
-
-### Find specific version of merchant's PII data
-GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/2
 
 ### Onboard merchant
 POST http://localhost:8080/merchants
@@ -28,6 +22,9 @@ Content-Type: application/json
     "Asian"
   ]
 }
+
+### Find merchant by ID
+GET http://localhost:8080/merchants/{{merchant_id}}
 
 ### Submit PII data V1
 POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
@@ -58,6 +55,15 @@ Content-Type: application/json
   "addressLine1": "Cali 123",
   "addressLine2": null
 }
+
+### Find merchant by ID
+GET http://localhost:8080/merchants/{{merchant_id}}
+
+### Find specific version of merchant's PII data
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/1
+
+### Find specific version of merchant's PII data
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/2
 
 ### Reconcile PII data V1 - V2
 POST http://localhost:8080/merchants/{{merchant_id}}/pii-data/reconcile
@@ -91,6 +97,15 @@ Content-Type: application/json
   "addressLine2": "2nd floor"
 }
 
+### Find merchant by ID
+GET http://localhost:8080/merchants/{{merchant_id}}
+
+### Find specific version of merchant's PII data
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/2
+
+### Find specific version of merchant's PII data
+GET http://localhost:8080/merchants/{{merchant_id}}/pii-data/3
+
 ### Reconcile PII data V2 - V3
 POST http://localhost:8080/merchants/{{merchant_id}}/pii-data/reconcile
 Content-Type: application/json
@@ -107,6 +122,9 @@ Content-Type: application/json
   "reconciledAddressLine1": "Sesame street 33",
   "reconciledAddressLine2": "2nd floor"
 }
+
+### Find merchant by ID
+GET http://localhost:8080/merchants/{{merchant_id}}
 
 ### Reprocess DLQ
 POST http://localhost:8080/internal/events/dead-letter/merchants/{{merchant_id}}/retry

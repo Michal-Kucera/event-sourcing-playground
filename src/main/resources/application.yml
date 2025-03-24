@@ -19,7 +19,7 @@ axon:
   eventhandling:
     processors:
       merchants:
-        simulate-failure: true
+        simulate-failure: false
         dlq:
           enabled: true
 logging:
