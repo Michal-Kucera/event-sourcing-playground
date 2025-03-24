@@ -41,12 +41,12 @@ class AxonConfiguration {
     fun deadLetterEnqueuePolicyConfigurerModule() = ConfigurerModule {
         it.eventProcessing().registerDefaultDeadLetterPolicy { _ ->
             EnqueuePolicy { letter, cause ->
-                val retries = letter.diagnostics().getOrDefault("retries", 0) as Int
-                println("Attempt: $retries")
+                val retries = letter.diagnostics()["retries"] as? Int
+                println("Attempt: ${retries ?: "-"} for ${letter.message().payloadType.name}")
                 when {
-                    retries == 0 -> Decisions.enqueue(cause) { MetaData.with("retries", 0) }
-                    retries > 5 -> Decisions.evict()
-                    else -> Decisions.requeue(cause) { it.diagnostics().and("retries", retries + 1) }
+                    retries == null -> Decisions.requeue(cause) { MetaData.with("retries", 0) }
+                    retries <= 3 -> Decisions.requeue(cause) { it.diagnostics().and("retries", retries + 1) }
+                    else -> Decisions.evict()
                 }
             }
         }

@@ -9,42 +9,79 @@ import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
+import org.axonframework.eventhandling.ReplayStatus
 import org.axonframework.eventhandling.SequenceNumber
 import org.jooq.DSLContext
 import org.jooq.JSONB
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation.REQUIRES_NEW
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import kotlin.random.Random.Default.nextBoolean
 
 @Component
 @ProcessingGroup("merchants")
 class MerchantReadModelProjector(
     private val jooqContext: DSLContext,
     private val objectMapper: ObjectMapper,
-    @Value("\${axon.eventhandling.processors.merchants.random-failure}")
-    private val isRandomFailureEnabled: Boolean
+    @Value("\${axon.eventhandling.processors.merchants.simulate-failure}")
+    private val shouldFail: Boolean
 ) {
 
     @EventHandler
-    @Transactional
+    @Transactional(propagation = REQUIRES_NEW)
     fun on(
         event: MerchantEvent,
         @SequenceNumber sequenceNumber: Long,
+        replayStatus: ReplayStatus
     ) {
         println(
             "Applying ${event.javaClass.simpleName} event to merchant ${event.aggregateId} projection " +
                     "in version $sequenceNumber"
         )
         when (event) {
-            is MerchantOnboarded -> on(event, sequenceNumber)
+            is MerchantOnboarded -> on(event, sequenceNumber, replayStatus)
             is PiiDataSubmitted -> on(event, sequenceNumber)
             is PiiDataReconciled -> on(event, sequenceNumber)
         }
-        if (isRandomFailureEnabled && nextBoolean()) {
-            error("Random failure kicks in for merchant ${event.aggregateId}!")
+        if (shouldFail) {
+            error("🤷🏼‍♂️ Oh no! Something has gone sideways with merchant ${event.aggregateId}!")
         }
+    }
+
+    private fun on(event: MerchantOnboarded, sequenceNumber: Long, replayStatus: ReplayStatus) {
+        if (replayStatus.isReplay) {
+            jooqContext.deleteFrom(MERCHANT_PROJECTION)
+                .where(MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value))
+                .execute()
+        }
+        jooqContext.insertInto(MERCHANT_PROJECTION)
+            .set(MerchantProjectionRecord().apply {
+                merchantId = event.aggregateId.value
+                data = JSONB.jsonb(
+                    objectMapper.writeValueAsString(
+                        Projection(
+                            id = event.aggregateId.value,
+                            name = null,
+                            platformId = event.platformId.platformId,
+                            externalId = event.platformId.merchantExternalId,
+                            countryCode = event.legalAddress.country.code,
+                            postCode = event.legalAddress.postCode,
+                            city = event.legalAddress.city,
+                            addressLine1 = event.legalAddress.addressLine1,
+                            addressLine2 = event.legalAddress.addressLine2,
+                            currencyCode = event.currency.code.currencyCode,
+                            kitchenTypes = event.kitchenTypes.map { it.value }.toSet(),
+                            vatNumber = null,
+                            registrationNumber = null,
+                            latestSubmittedPiiDataVersion = 0,
+                            latestReconciledPiiDataVersion = 0,
+                        )
+                    )
+                )
+                latestSequenceNumber = sequenceNumber
+            })
+            .execute()
     }
 
     private fun on(event: PiiDataReconciled, sequenceNumber: Long) {
@@ -106,36 +143,6 @@ class MerchantReadModelProjector(
         )
         projection.latestSequenceNumber = sequenceNumber
         projection.update()
-    }
-
-    private fun on(event: MerchantOnboarded, sequenceNumber: Long) {
-        jooqContext.insertInto(MERCHANT_PROJECTION)
-            .set(MerchantProjectionRecord().apply {
-                merchantId = event.aggregateId.value
-                data = JSONB.jsonb(
-                    objectMapper.writeValueAsString(
-                        Projection(
-                            id = event.aggregateId.value,
-                            name = null,
-                            platformId = event.platformId.platformId,
-                            externalId = event.platformId.merchantExternalId,
-                            countryCode = event.legalAddress.country.code,
-                            postCode = event.legalAddress.postCode,
-                            city = event.legalAddress.city,
-                            addressLine1 = event.legalAddress.addressLine1,
-                            addressLine2 = event.legalAddress.addressLine2,
-                            currencyCode = event.currency.code.currencyCode,
-                            kitchenTypes = event.kitchenTypes.map { it.value }.toSet(),
-                            vatNumber = null,
-                            registrationNumber = null,
-                            latestSubmittedPiiDataVersion = 0,
-                            latestReconciledPiiDataVersion = 0,
-                        )
-                    )
-                )
-                latestSequenceNumber = sequenceNumber
-            })
-            .execute()
     }
 
     data class Projection(

@@ -1,4 +1,4 @@
-@merchant_id = c2745850-0e33-4929-8564-7381a90a74bb
+@merchant_id = a7272acd-8007-41dd-8ef0-01f69f29eaa5
 
 ### Find all merchants
 GET http://localhost:8080/merchants
@@ -59,21 +59,6 @@ Content-Type: application/json
   "addressLine2": null
 }
 
-### Submit PII data V3
-POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
-Content-Type: application/json
-
-{
-  "name": "Mona Chauhan",
-  "vatNumber": "98754567",
-  "registrationNumber": "345678987",
-  "countryCode": "USA",
-  "postCode": "08032",
-  "city": "San Francisco",
-  "addressLine1": "Sesame street 33",
-  "addressLine2": "2nd floor"
-}
-
 ### Reconcile PII data V1 - V2
 POST http://localhost:8080/merchants/{{merchant_id}}/pii-data/reconcile
 Content-Type: application/json
@@ -89,6 +74,21 @@ Content-Type: application/json
   "reconciledCity": "Chicago",
   "reconciledAddressLine1": "Cali 123",
   "reconciledAddressLine2": null
+}
+
+### Submit PII data V3
+POST http://localhost:8080/merchants/{{merchant_id}}/pii-data
+Content-Type: application/json
+
+{
+  "name": "Mona Chauhan",
+  "vatNumber": "98754567",
+  "registrationNumber": "345678987",
+  "countryCode": "USA",
+  "postCode": "08032",
+  "city": "San Francisco",
+  "addressLine1": "Sesame street 33",
+  "addressLine2": "2nd floor"
 }
 
 ### Reconcile PII data V2 - V3
@@ -109,7 +109,7 @@ Content-Type: application/json
 }
 
 ### Reprocess DLQ
-POST http://localhost:8080/internal/events/dead-letter/merchants/retry
+POST http://localhost:8080/internal/events/dead-letter/merchants/{{merchant_id}}/retry
 
 ### Get all events
-GET http://localhost:8080/internal/events/{{merchant_id}}
+GET http://localhost:8080/internal/events/merchant/{{merchant_id}}
