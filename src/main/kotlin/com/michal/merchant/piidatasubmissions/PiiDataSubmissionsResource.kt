@@ -1,9 +1,9 @@
-package com.michal.merchant.piidatasubmissions.internal
+package com.michal.merchant.piidatasubmissions
 
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData.Version
-import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModel
-import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModelQuery
+import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModelQueryHandler.PiiDataSubmissionReadModel
+import com.michal.merchant.piidatasubmissions.PiiDataSubmissionReadModelQueryHandler.PiiDataSubmissionReadModelQuery
 import org.axonframework.extensions.kotlin.queryOptional
 import org.axonframework.queryhandling.QueryGateway
 import org.springframework.http.ResponseEntity.notFound

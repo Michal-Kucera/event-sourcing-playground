@@ -1,4 +1,4 @@
-package com.michal.merchant.merchants.internal
+package com.michal.merchant.merchants
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.michal.jooq.public.tables.records.MerchantProjectionRecord

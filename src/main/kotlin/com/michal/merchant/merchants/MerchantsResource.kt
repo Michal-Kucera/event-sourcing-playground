@@ -1,10 +1,10 @@
-package com.michal.merchant.merchants.internal
+package com.michal.merchant.merchants
 
 import com.michal.merchant.domain.valueobject.MerchantId
-import com.michal.merchant.merchants.MerchantByIdReadModel
-import com.michal.merchant.merchants.MerchantByIdReadModelQuery
-import com.michal.merchant.merchants.MerchantsReadModel
-import com.michal.merchant.merchants.MerchantsReadModelQuery
+import com.michal.merchant.merchants.MerchantByIdReadModelQueryHandler.MerchantByIdReadModel
+import com.michal.merchant.merchants.MerchantByIdReadModelQueryHandler.MerchantByIdReadModelQuery
+import com.michal.merchant.merchants.MerchantsReadModelQueryHandler.MerchantsReadModel
+import com.michal.merchant.merchants.MerchantsReadModelQueryHandler.MerchantsReadModelQuery
 import org.axonframework.extensions.kotlin.queryMany
 import org.axonframework.extensions.kotlin.queryOptional
 import org.axonframework.queryhandling.QueryGateway
