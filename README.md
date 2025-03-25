@@ -4,7 +4,18 @@ This is my space to play with event sourcing, in Kotlin + Axon + Spring Boot.
 
 For testing, use [HTTP scripts](./testing.http) and [SQL scripts](./testing.sql).
 
-# Flow
+# Features
+
+```
+### Onboard merchant
+POST /merchants
+
+### Submit PII data
+POST /merchants/{merchant_id}/pii-data
+
+### Reconcile PII data
+POST /merchants/{merchant_id}/pii-data/reconcile
+```
 
 <details>
 <summary>Details</summary>
@@ -20,8 +31,6 @@ flowchart TD
 ```
 
 </details>
-
-# Features
 
 1. [x] Vertical slices architecture
 2. [x] Aggregate ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
