@@ -6,6 +6,8 @@ For testing, use [HTTP scripts](./testing.http) and [SQL scripts](./testing.sql)
 
 # Features
 
+### Commands
+
 ```
 ### Onboard merchant
 POST /merchants
@@ -17,36 +19,59 @@ POST /merchants/{merchant_id}/pii-data
 POST /merchants/{merchant_id}/pii-data/reconcile
 ```
 
+### Queries
+
+```
+### Find all merchants
+GET /merchants
+
+### Find merchant by ID
+GET /merchants/{merchant_id}
+
+### Find specific version of merchant's PII data
+GET /merchants/{merchant_id}/pii-data/{pii_data_version}
+```
+
+### Internal
+
+```
+### Get log of events
+GET /internal/events/{aggregate_name}/{merchant_id}
+
+### Reprocess DLQ
+POST /internal/events/dead-letter/{aggregate_name}/{aggregate_id}/retry
+```
+
 <details>
 <summary>Details</summary>
 
 ```mermaid
-flowchart TD
-    A("Start") -->|OnboardMerchant| B[MerchantOnboarded]
-    B -->|" SubmitPiiData (v1) "| C["PiiDataSubmitted (v1)"]
-    C -->|" SubmitPiiData (v2) "| D["PiiDataSubmitted (v2)"]
-    D -->|" ReconcilePiiData (v1 - v2) "| E["PiiDataReconciled (v1 - v2)"]
-    E -->|" SubmitPiiData (v3) "| F["PiiDataSubmitted (v3)"]
-    F -->|" ReconcilePiiData (v2 - v3) "| G["PiiDataReconciled (v2 - v3)"]
+flowchart TB
+    A[fa:fa-terminal OnboardMerchant -> fa:fa-envelope MerchantOnboarded] --> B["fa:fa-terminal SubmitPiiData (v1) -> fa:fa-envelope PiiDataSubmitted (v1)"]
+    B --> C["fa:fa-terminal SubmitPiiData (v2) -> fa:fa-envelope PiiDataSubmitted (v2)"]
+    C --> D["fa:fa-terminal ReconcilePiiData (v1 - v2) -> fa:fa-envelope PiiDataReconciled (v1 - v2)"]
+    D --> E["fa:fa-terminal SubmitPiiData (v3) -> fa:fa-envelope PiiDataSubmitted (v3)"]
+    E --> F["fa:fa-terminal ReconcilePiiData (v2 - v3) -> fa:fa-envelope PiiDataReconciled (v2 - v3)"]
 ```
 
 </details>
 
-1. [x] Vertical slices architecture
-2. [x] Aggregate ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
-3. [x] Commands ([MerchantCommand](src/main/kotlin/com/michal/merchant/domain/command/MerchantCommand.kt))
-4. [x] Events ([MerchantEvent](src/main/kotlin/com/michal/merchant/domain/event/MerchantEvent.kt))
-5. [x] Unit tests ([MerchantTest](src/test/kotlin/com/michal/merchant/MerchantTest.kt))
-6. [x] E2E tests ([MerchantE2eTest](src/test/kotlin/com/michal/merchant/MerchantE2eTest.kt))
-7. [x] Command handler ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
-8. [x] Event handler ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
-9. [x] Eventsourcing handler ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
-10. [x] Queries ([Query](src/main/kotlin/com/michal/sharedkernel/eventsourcing/Query.kt))
-11. [x] Live read
-    model ([PiiDataSubmissionReadModelQueryHandler](src/main/kotlin/com/michal/merchant/piidatasubmissions/internal/PiiDataSubmissionReadModelQueryHandler.kt))
-12. [x] Database projected read model (
-    async) ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
-13. [x] Dead Letter Queue + retries ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
+1. Aggregate ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
+2. Commands ([MerchantCommand](src/main/kotlin/com/michal/merchant/domain/command/MerchantCommand.kt))
+3. Events ([MerchantEvent](src/main/kotlin/com/michal/merchant/domain/event/MerchantEvent.kt))
+4. Command handler ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
+5. Event handler ([Merchant](src/main/kotlin/com/michal/merchant/domain/Merchant.kt))
+6. Eventsourcing handler ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
+7. Projections
+    - Queries ([Query](src/main/kotlin/com/michal/sharedkernel/eventsourcing/Query.kt))
+    - Live read
+      model ([PiiDataSubmissionReadModelQueryHandler](src/main/kotlin/com/michal/merchant/piidatasubmissions/internal/PiiDataSubmissionReadModelQueryHandler.kt))
+    - Database projected read model (async) ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
+8. Dead Letter Queue + retries ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
+9. Testing
+    - Unit tests ([MerchantTest](src/test/kotlin/com/michal/merchant/MerchantTest.kt))
+    - E2E tests ([MerchantE2eTest](src/test/kotlin/com/michal/merchant/MerchantE2eTest.kt))
+10. Vertical slices architecture
 
 # TODO
 
