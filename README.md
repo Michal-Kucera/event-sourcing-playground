@@ -4,6 +4,13 @@ This is my space to play with event sourcing, in Kotlin + Axon + Spring Boot.
 
 For testing, use [HTTP scripts](./testing.http) and [SQL scripts](./testing.sql).
 
+# Current problem + potential solution
+
+- On the left, red boxes are data points that we are loosing
+- On the right, blue boxes = commands, orange boxes = events
+
+![](misc/current-problem.png)
+
 # Features
 
 ### Commands
