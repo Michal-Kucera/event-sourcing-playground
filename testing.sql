@@ -21,3 +21,8 @@ order by enqueued_at;
 
 select *
 from merchant_projection;
+
+-- delete "random" data from projection
+delete
+from merchant_projection
+where latest_sequence_number < 2;

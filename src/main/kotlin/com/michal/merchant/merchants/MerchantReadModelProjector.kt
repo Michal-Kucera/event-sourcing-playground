@@ -9,7 +9,7 @@ import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
-import org.axonframework.eventhandling.ReplayStatus
+import org.axonframework.eventhandling.ResetHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.jooq.DSLContext
 import org.jooq.JSONB
@@ -27,20 +27,21 @@ class MerchantReadModelProjector(
     @Value("\${axon.eventhandling.processors.merchants.simulate-failure}")
     private val shouldFail: Boolean
 ) {
+    @ResetHandler
+    fun reset() {
+        println("Resetting merchant projections")
+        jooqContext.deleteFrom(MERCHANT_PROJECTION).execute()
+    }
 
     @EventHandler
     @Transactional(propagation = REQUIRES_NEW)
-    fun on(
-        event: MerchantEvent,
-        @SequenceNumber sequenceNumber: Long,
-        replayStatus: ReplayStatus
-    ) {
+    fun on(event: MerchantEvent, @SequenceNumber sequenceNumber: Long) {
         println(
             "Applying ${event.javaClass.simpleName} event to merchant ${event.aggregateId} projection " +
                     "in version $sequenceNumber"
         )
         when (event) {
-            is MerchantOnboarded -> on(event, sequenceNumber, replayStatus)
+            is MerchantOnboarded -> on(event, sequenceNumber)
             is PiiDataSubmitted -> on(event, sequenceNumber)
             is PiiDataReconciled -> on(event, sequenceNumber)
         }
@@ -49,12 +50,7 @@ class MerchantReadModelProjector(
         }
     }
 
-    private fun on(event: MerchantOnboarded, sequenceNumber: Long, replayStatus: ReplayStatus) {
-        if (replayStatus.isReplay) {
-            jooqContext.deleteFrom(MERCHANT_PROJECTION)
-                .where(MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value))
-                .execute()
-        }
+    private fun on(event: MerchantOnboarded, sequenceNumber: Long) {
         jooqContext.insertInto(MERCHANT_PROJECTION)
             .set(MerchantProjectionRecord().apply {
                 merchantId = event.aggregateId.value

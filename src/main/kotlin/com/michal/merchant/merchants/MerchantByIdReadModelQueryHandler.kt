@@ -17,7 +17,6 @@ class MerchantByIdReadModelQueryHandler(
     private val jooqContext: DSLContext,
     private val objectMapper: ObjectMapper,
 ) {
-
     @QueryHandler
     fun handle(
         query: MerchantByIdReadModelQuery
