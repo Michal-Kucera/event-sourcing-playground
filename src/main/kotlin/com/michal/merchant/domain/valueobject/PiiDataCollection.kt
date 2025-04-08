@@ -12,9 +12,10 @@ data class PiiDataCollection(
     fun submit(
         version: PiiData.Version,
         name: PiiData.Name,
+        email: PiiData.Email,
         legalEntityId: PiiData.LegalEntityId,
         legalAddress: PiiData.LegalAddress
-    ) = copy(piiData = piiData + PiiData.with(version, name, legalEntityId, legalAddress))
+    ) = copy(piiData = piiData + PiiData.with(version, name, email, legalEntityId, legalAddress))
 
     fun reconcile(
         olderVersion: PiiData.Version,

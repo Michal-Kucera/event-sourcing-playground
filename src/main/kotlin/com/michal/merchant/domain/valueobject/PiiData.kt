@@ -5,6 +5,7 @@ import com.michal.sharedkernel.valueobject.Country
 data class PiiData private constructor(
     val version: Version,
     val name: Name,
+    val email: Email,
     val legalEntityId: LegalEntityId,
     val legalAddress: LegalAddress,
 ) {
@@ -12,6 +13,7 @@ data class PiiData private constructor(
         fun with(
             version: Version,
             name: Name,
+            email: Email,
             legalEntityId: LegalEntityId,
             legalAddress: LegalAddress
         ): PiiData {
@@ -19,7 +21,7 @@ data class PiiData private constructor(
                 "Legal entity has different country (${legalEntityId.country}) " +
                         "than legal address (${legalAddress.country})"
             }
-            return PiiData(version, name, legalEntityId, legalAddress)
+            return PiiData(version, name, email, legalEntityId, legalAddress)
         }
     }
 
@@ -56,6 +58,21 @@ data class PiiData private constructor(
                 require(name.isNotBlank()) { "Name cannot be blank" }
                 return Name(name)
             }
+        }
+    }
+
+    data class Email private constructor(
+        val value: String
+    ) {
+        override fun toString(): String = value
+
+        companion object {
+            fun of(email: String): Email {
+                require("@" in email) { "Email must contain @" }
+                return Email(email)
+            }
+
+            fun unknown() = Email("N/A")
         }
     }
 

@@ -26,6 +26,7 @@ class MerchantsReadModelQueryHandler(
     data class MerchantsReadModel(
         val id: UUID,
         val name: String?,
+        val email: String?,
         val platformId: UUID,
         val externalId: String,
         val countryCode: String,
@@ -44,6 +45,7 @@ class MerchantsReadModelQueryHandler(
             fun from(projection: Projection) = MerchantsReadModel(
                 id = projection.id,
                 name = projection.name,
+                email = projection.email,
                 platformId = projection.platformId,
                 externalId = projection.externalId,
                 countryCode = projection.countryCode,

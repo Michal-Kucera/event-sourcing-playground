@@ -56,6 +56,7 @@ fun SubmitPiiData.Companion.validStable(
 ) = SubmitPiiData(
     MerchantId.validStable(),
     PiiData.Name.validStable(),
+    PiiData.Email.validStable(),
     PiiData.LegalEntityId.validStable(country),
     PiiData.LegalAddress.validStable(country)
 )
@@ -64,6 +65,7 @@ fun PiiDataSubmitted.Companion.validStable() = PiiDataSubmitted(
     MerchantId.validStable(),
     Version.initial(),
     PiiData.Name.validStable(),
+    PiiData.Email.validStable(),
     PiiData.LegalEntityId.validStable(),
     PiiData.LegalAddress.validStable()
 )
@@ -72,6 +74,7 @@ fun SubmitPiiData.Companion.validStableV2(
 ) = SubmitPiiData(
     MerchantId.validStable(),
     PiiData.Name.of("Jennifer Shinde"),
+    PiiData.Email.of("jennifer.shinde@hello.com"),
     PiiData.LegalEntityId.of(
         country = UNITED_STATES_OF_AMERICA,
         vatNumber = "45678901",
@@ -90,6 +93,7 @@ fun PiiDataSubmitted.Companion.validStableV2() = PiiDataSubmitted(
     MerchantId.validStable(),
     Version.of(2),
     PiiData.Name.of("Jennifer Shinde"),
+    PiiData.Email.of("jennifer.shinde@hello.com"),
     PiiData.LegalEntityId.of(
         country = UNITED_STATES_OF_AMERICA,
         vatNumber = "45678901",
@@ -108,6 +112,7 @@ fun PiiDataSubmitted.Companion.validStableV3() = PiiDataSubmitted(
     MerchantId.validStable(),
     Version.of(3),
     PiiData.Name.of("Mona Chauhan"),
+    PiiData.Email.of("mona.chauhan@hello.com"),
     PiiData.LegalEntityId.of(
         country = UNITED_STATES_OF_AMERICA,
         vatNumber = "98754567",
@@ -123,6 +128,8 @@ fun PiiDataSubmitted.Companion.validStableV3() = PiiDataSubmitted(
 )
 
 fun PiiData.Name.Companion.validStable() = PiiData.Name.of("Paulo Merido")
+
+fun PiiData.Email.Companion.validStable() = PiiData.Email.of("paulo.merido@hello.com")
 
 fun PiiData.LegalEntityId.Companion.validStable(
     country: Country = UNITED_STATES_OF_AMERICA

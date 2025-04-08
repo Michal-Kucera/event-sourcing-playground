@@ -7,6 +7,7 @@ import com.michal.merchant.domain.valueobject.PiiData
 import com.michal.sharedkernel.eventsourcing.Event
 import com.michal.sharedkernel.valueobject.Currency
 import com.michal.sharedkernel.valueobject.PlatformId
+import org.axonframework.serialization.Revision
 
 sealed interface MerchantEvent : Event<MerchantId> {
 
@@ -20,10 +21,13 @@ sealed interface MerchantEvent : Event<MerchantId> {
         companion object
     }
 
+    @Revision("2")
     data class PiiDataSubmitted(
         override val aggregateId: MerchantId,
         val version: PiiData.Version,
         val name: PiiData.Name,
+        // since v2
+        val email: PiiData.Email,
         val legalEntityId: PiiData.LegalEntityId,
         val legalAddress: PiiData.LegalAddress
     ) : MerchantEvent {

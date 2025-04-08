@@ -40,6 +40,7 @@ class MerchantByIdReadModelQueryHandler(
         @field:JsonIgnore
         val latestSequenceNumber: Long,
         val name: String?,
+        val email: String?,
         val platformId: UUID,
         val externalId: String,
         val countryCode: String,
@@ -62,6 +63,7 @@ class MerchantByIdReadModelQueryHandler(
                 id = projection.id,
                 latestSequenceNumber = latestSequenceNumber,
                 name = projection.name,
+                email = projection.email,
                 platformId = projection.platformId,
                 externalId = projection.externalId,
                 countryCode = projection.countryCode,

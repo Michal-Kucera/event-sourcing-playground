@@ -34,6 +34,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         content = """
             {
               "name": "Paulo Merido",
+              "email": "paulo.merido@hello.com",
               "vatNumber": "123456789",
               "registrationNumber": "987654321",
               "countryCode": "USA",
@@ -50,6 +51,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         content = """
             {
               "name": "Jennifer Shinde",
+              "email": "jennifer.shinde@hello.com",
               "vatNumber": "45678901",
               "registrationNumber": "76540987",
               "countryCode": "USA",
@@ -66,6 +68,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
         content = """
             {
               "name": "Mona Chauhan",
+              "email": "mona.chauhan@hello.com",
               "vatNumber": "98754567",
               "registrationNumber": "345678987",
               "countryCode": "USA",
@@ -177,6 +180,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
                     "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
                     "version": 1,
                     "name": "Paulo Merido",
+                    "email": "paulo.merido@hello.com",
                     "vatNumber": "123456789",
                     "registrationNumber": "987654321",
                     "countryCode": "USA",
@@ -203,6 +207,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
                     "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
                     "version": 2,
                     "name": "Jennifer Shinde",
+                    "email": "jennifer.shinde@hello.com",
                     "vatNumber": "45678901",
                     "registrationNumber": "76540987",
                     "countryCode": "USA",
@@ -229,6 +234,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
                     "merchantId": "9cbf676b-552b-460d-8da4-029e97ca95b7",
                     "version": 3,
                     "name": "Mona Chauhan",
+                    "email": "mona.chauhan@hello.com",
                     "vatNumber": "98754567",
                     "registrationNumber": "345678987",
                     "countryCode": "USA",
@@ -259,6 +265,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
                     {
                       "id": "9cbf676b-552b-460d-8da4-029e97ca95b7",
                       "name": "Jennifer Shinde",
+                      "email": "paulo.merido@hello.com",
                       "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
                       "externalId": "026c516959354797bd1a7bdc03e2e8c4",
                       "countryCode": "USA",

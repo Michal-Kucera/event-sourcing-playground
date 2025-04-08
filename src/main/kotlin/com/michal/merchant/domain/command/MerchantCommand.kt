@@ -24,6 +24,7 @@ sealed interface MerchantCommand : Command<MerchantId> {
     data class SubmitPiiData(
         @TargetAggregateIdentifier override val aggregateId: MerchantId,
         val name: PiiData.Name,
+        val email: PiiData.Email,
         val legalEntityId: PiiData.LegalEntityId,
         val legalAddress: PiiData.LegalAddress
     ) : MerchantCommand {

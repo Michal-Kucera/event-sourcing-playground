@@ -28,6 +28,7 @@ class SubmitPiiDataResource(
         SubmitPiiData(
             aggregateId = MerchantId.of(merchantId),
             name = PiiData.Name.of(payload.name),
+            email = PiiData.Email.of(payload.email),
             legalEntityId = PiiData.LegalEntityId.of(
                 country = Country.from(payload.countryCode),
                 vatNumber = payload.vatNumber,
@@ -45,6 +46,7 @@ class SubmitPiiDataResource(
 
     data class Payload(
         val name: String,
+        val email: String,
         val vatNumber: String?,
         val registrationNumber: String?,
         val countryCode: String,

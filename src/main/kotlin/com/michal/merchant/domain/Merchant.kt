@@ -47,7 +47,7 @@ class Merchant {
                 "Submitted PII data has different country (${legalAddress.country}) " +
                         "than anonymized data (${anonymizedData.legalAddress.country})"
             }
-            applyEvent(PiiDataSubmitted(aggregateId, piiData.nextVersion(), name, legalEntityId, legalAddress))
+            applyEvent(PiiDataSubmitted(aggregateId, piiData.nextVersion(), name, email, legalEntityId, legalAddress))
         }
     }
 
@@ -102,7 +102,7 @@ class Merchant {
     }
 
     fun on(event: PiiDataSubmitted) {
-        piiData = piiData.submit(event.version, event.name, event.legalEntityId, event.legalAddress)
+        piiData = piiData.submit(event.version, event.name, event.email, event.legalEntityId, event.legalAddress)
     }
 
     fun on(event: PiiDataReconciled) {

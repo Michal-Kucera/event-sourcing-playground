@@ -24,6 +24,7 @@ class SubmitPiiDataUseCase(
                     command.aggregateId,
                     merchant.piiData.nextVersion(),
                     command.name,
+                    command.email,
                     command.legalEntityId,
                     command.legalAddress
                 )

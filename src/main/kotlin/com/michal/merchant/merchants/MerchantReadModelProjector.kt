@@ -59,6 +59,7 @@ class MerchantReadModelProjector(
                         Projection(
                             id = event.aggregateId.value,
                             name = null,
+                            email = null,
                             platformId = event.platformId.platformId,
                             externalId = event.platformId.merchantExternalId,
                             countryCode = event.legalAddress.country.code,
@@ -120,6 +121,7 @@ class MerchantReadModelProjector(
                 when {
                     event.version.isInitialVersion() -> projectionData.copy(
                         name = event.name.value,
+                        email = event.email.value,
                         vatNumber = event.legalEntityId.vatNumber,
                         registrationNumber = event.legalEntityId.registrationNumber,
                         countryCode = event.legalAddress.country.code,
@@ -144,6 +146,7 @@ class MerchantReadModelProjector(
     data class Projection(
         val id: UUID,
         val name: String?,
+        val email: String?,
         val platformId: UUID,
         val externalId: String,
         val countryCode: String,
