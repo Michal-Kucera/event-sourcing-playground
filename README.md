@@ -95,7 +95,7 @@ POST /internal/events/dead-letter/{aggregate_name}/{aggregate_id}/retry
       model ([PiiDataSubmissionReadModelQueryHandler](src/main/kotlin/com/michal/merchant/piidatasubmissions/internal/PiiDataSubmissionReadModelQueryHandler.kt))
     - Database projected read model (sync) - when projection fails, command handler fails too
     - Database projected read model (async) ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
-    - Replay events - rebuild projections ([article](https://www.axoniq.io/blog/axon-framework-4.6.0-replay-context-propagation))
+    - Replay events - rebuild projections ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
 8. Error handling
     - Dead Letter Queue + retry ([MerchantReadModelProjector](src/main/kotlin/com/michal/merchant/merchants/internal/MerchantReadModelProjector.kt))
     - Retry mechanism for command handlers
