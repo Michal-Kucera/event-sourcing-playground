@@ -14,7 +14,7 @@ class OnboardMerchantUseCase(
 
     @CommandHandler
     fun handle(command: OnboardMerchant) {
-        repository.newInstance(::Merchant) {
+        repository.newInstance(::Merchant).execute {
             applyEvent(
                 MerchantOnboarded(
                     command.aggregateId,
