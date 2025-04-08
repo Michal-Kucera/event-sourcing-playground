@@ -29,8 +29,8 @@ class Merchant {
     private lateinit var aggregateId: MerchantId
     private lateinit var platformId: PlatformId
     private lateinit var currency: Currency
-    private lateinit var anonymizedData: AnonymizedData
-    private lateinit var piiData: PiiDataCollection
+    lateinit var anonymizedData: AnonymizedData
+    lateinit var piiData: PiiDataCollection
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
@@ -42,50 +42,46 @@ class Merchant {
 
     @CommandHandler
     fun handle(command: SubmitPiiData) {
-        require(anonymizedData.hasSame(command.legalAddress.country)) {
-            "Submitted PII data has different country (${command.legalAddress.country}) " +
-                    "than anonymized data (${anonymizedData.legalAddress.country})"
+        with(command) {
+            require(anonymizedData.hasSame(legalAddress.country)) {
+                "Submitted PII data has different country (${legalAddress.country}) " +
+                        "than anonymized data (${anonymizedData.legalAddress.country})"
+            }
+            applyEvent(PiiDataSubmitted(aggregateId, piiData.nextVersion(), name, legalEntityId, legalAddress))
         }
-        applyEvent(
-            PiiDataSubmitted(
-                aggregateId,
-                piiData.nextVersion(),
-                command.name,
-                command.legalEntityId,
-                command.legalAddress
-            )
-        )
     }
 
     @CommandHandler
     fun handle(command: ReconcilePiiData) {
-        require(piiData.hasVersion(command.olderVersion)) {
-            "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled because " +
-                    "the version ${command.olderVersion} of PII data has not been submitted yet"
-        }
-        require(piiData.hasVersion(command.newerVersion)) {
-            "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled because " +
-                    "the version ${command.newerVersion} of PII data has not been submitted yet"
-        }
-        require(!piiData.hasPendingReconciliationBefore(command.olderVersion)) {
-            "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled because " +
-                    "there is a previous version ${piiData.firstUnreconciledPiiData()?.version} that must be " +
-                    "reconciled first"
-        }
-        require(!piiData.isReconciled(command.newerVersion)) {
-            "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled because " +
-                    "these versions are already reconciled"
-        }
-        applyEvent(
-            PiiDataReconciled(
-                aggregateId,
-                command.olderVersion,
-                command.newerVersion,
-                command.reconciledName,
-                command.reconciledLegalEntityId,
-                command.reconciledLegalAddress
+        with(command) {
+            require(piiData.hasVersion(olderVersion)) {
+                "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
+                        "the version $olderVersion of PII data has not been submitted yet"
+            }
+            require(piiData.hasVersion(newerVersion)) {
+                "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
+                        "the version $newerVersion of PII data has not been submitted yet"
+            }
+            require(!piiData.hasPendingReconciliationBefore(olderVersion)) {
+                "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
+                        "there is a previous version ${piiData.firstUnreconciledPiiData()?.version} that must be " +
+                        "reconciled first"
+            }
+            require(!piiData.isReconciled(newerVersion)) {
+                "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
+                        "these versions are already reconciled"
+            }
+            applyEvent(
+                PiiDataReconciled(
+                    aggregateId,
+                    olderVersion,
+                    newerVersion,
+                    reconciledName,
+                    reconciledLegalEntityId,
+                    reconciledLegalAddress
+                )
             )
-        )
+        }
     }
 
     @EventSourcingHandler
