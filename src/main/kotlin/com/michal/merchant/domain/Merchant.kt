@@ -3,6 +3,7 @@ package com.michal.merchant.domain
 import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
 import com.michal.merchant.domain.command.MerchantCommand.ReconcilePiiData
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
+import com.michal.merchant.domain.event.MerchantEvent
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
@@ -88,6 +89,14 @@ class Merchant {
     }
 
     @EventSourcingHandler
+    fun on(event: MerchantEvent) {
+        when (event) {
+            is MerchantOnboarded -> on(event)
+            is PiiDataReconciled -> on(event)
+            is PiiDataSubmitted -> on(event)
+        }
+    }
+
     fun on(event: MerchantOnboarded) {
         aggregateId = event.aggregateId
         platformId = event.platformId
@@ -96,12 +105,10 @@ class Merchant {
         piiData = PiiDataCollection.withNoPiiData()
     }
 
-    @EventSourcingHandler
     fun on(event: PiiDataSubmitted) {
         piiData = piiData.submit(event.version, event.name, event.legalEntityId, event.legalAddress)
     }
 
-    @EventSourcingHandler
     fun on(event: PiiDataReconciled) {
         piiData = piiData.reconcile(
             event.olderVersion,
