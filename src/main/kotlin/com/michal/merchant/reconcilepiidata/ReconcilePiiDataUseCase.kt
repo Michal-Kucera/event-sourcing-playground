@@ -14,36 +14,34 @@ class ReconcilePiiDataUseCase(
 
     @CommandHandler
     fun handle(command: ReconcilePiiData) {
-        with(command) {
-            repository.load(aggregateId.toString()).execute {
-                require(it.piiData.hasVersion(olderVersion)) {
-                    "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
-                            "the version $olderVersion of PII data has not been submitted yet"
-                }
-                require(it.piiData.hasVersion(newerVersion)) {
-                    "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
-                            "the version $newerVersion of PII data has not been submitted yet"
-                }
-                require(!it.piiData.hasPendingReconciliationBefore(olderVersion)) {
-                    "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
-                            "there is a previous version ${it.piiData.firstUnreconciledPiiData()?.version} that must " +
-                            "be reconciled first"
-                }
-                require(!it.piiData.isReconciled(newerVersion)) {
-                    "PII data in version $olderVersion and $newerVersion cannot be reconciled because " +
-                            "these versions are already reconciled"
-                }
-                applyEvent(
-                    PiiDataReconciled(
-                        aggregateId,
-                        olderVersion,
-                        newerVersion,
-                        reconciledName,
-                        reconciledLegalEntityId,
-                        reconciledLegalAddress
-                    )
-                )
+        repository.load(command.aggregateId.toString()).execute { merchant ->
+            require(merchant.piiData.hasVersion(command.olderVersion)) {
+                "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled " +
+                        "because the version ${command.olderVersion} of PII data has not been submitted yet"
             }
+            require(merchant.piiData.hasVersion(command.newerVersion)) {
+                "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled " +
+                        "because the version ${command.newerVersion} of PII data has not been submitted yet"
+            }
+            require(!merchant.piiData.hasPendingReconciliationBefore(command.olderVersion)) {
+                "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled " +
+                        "because there is a previous version ${merchant.piiData.firstUnreconciledPiiData()?.version} " +
+                        "that must be reconciled first"
+            }
+            require(!merchant.piiData.isReconciled(command.newerVersion)) {
+                "PII data in version ${command.olderVersion} and ${command.newerVersion} cannot be reconciled " +
+                        "because these versions are already reconciled"
+            }
+            applyEvent(
+                PiiDataReconciled(
+                    command.aggregateId,
+                    command.olderVersion,
+                    command.newerVersion,
+                    command.reconciledName,
+                    command.reconciledLegalEntityId,
+                    command.reconciledLegalAddress
+                )
+            )
         }
     }
 }

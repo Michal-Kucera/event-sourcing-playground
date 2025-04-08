@@ -14,14 +14,20 @@ class SubmitPiiDataUseCase(
 
     @CommandHandler
     fun handle(command: SubmitPiiData) {
-        with(command) {
-            repository.load(aggregateId.toString()).execute {
-                require(it.anonymizedData.hasSame(legalAddress.country)) {
-                    "Submitted PII data has different country (${legalAddress.country}) " +
-                            "than anonymized data (${it.anonymizedData.legalAddress.country})"
-                }
-                applyEvent(PiiDataSubmitted(aggregateId, it.piiData.nextVersion(), name, legalEntityId, legalAddress))
+        repository.load(command.aggregateId.toString()).execute { merchant ->
+            require(merchant.anonymizedData.hasSame(command.legalAddress.country)) {
+                "Submitted PII data has different country (${command.legalAddress.country}) " +
+                        "than anonymized data (${merchant.anonymizedData.legalAddress.country})"
             }
+            applyEvent(
+                PiiDataSubmitted(
+                    command.aggregateId,
+                    merchant.piiData.nextVersion(),
+                    command.name,
+                    command.legalEntityId,
+                    command.legalAddress
+                )
+            )
         }
     }
 }
