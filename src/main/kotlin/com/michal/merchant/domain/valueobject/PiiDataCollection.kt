@@ -1,5 +1,7 @@
 package com.michal.merchant.domain.valueobject
 
+import com.michal.sharedkernel.valueobject.Email
+
 data class PiiDataCollection(
     private val piiData: List<PiiData>,
     private val reconciledPiiData: List<ReconciledPiiData>
@@ -12,7 +14,7 @@ data class PiiDataCollection(
     fun submit(
         version: PiiData.Version,
         name: PiiData.Name,
-        email: PiiData.Email,
+        email: Email,
         legalEntityId: PiiData.LegalEntityId,
         legalAddress: PiiData.LegalAddress
     ) = copy(piiData = piiData + PiiData.with(version, name, email, legalEntityId, legalAddress))
@@ -43,6 +45,15 @@ data class PiiDataCollection(
         if (version.isInitialVersion()) return false
         val firstUnreconciledPiiData = firstUnreconciledPiiData() ?: return false
         return firstUnreconciledPiiData.version != version.next()
+    }
+
+    fun currentPiiData(): PiiData {
+        require(hasPiiData()) { "No PII data has been submitted yet" }
+        val latestReconciledPiiData = latestReconciledPiiData()
+        return when {
+            latestReconciledPiiData != null -> piiData.single { it.version == latestReconciledPiiData.newerVersion }
+            else -> piiData.first()
+        }
     }
 
     fun firstUnreconciledPiiData(): PiiData? {

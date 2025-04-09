@@ -139,6 +139,7 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
                       {
                         "id": "9cbf676b-552b-460d-8da4-029e97ca95b7",
                         "name": "Jennifer Shinde",
+                        "email": "paulo.merido@hello.com",
                         "platformId": "e6ceecdb-5ad0-454d-a428-f9f0f873f69b",
                         "externalId": "026c516959354797bd1a7bdc03e2e8c4",
                         "countryCode": "USA",
@@ -288,6 +289,6 @@ class MerchantE2eClient(private val mockMvc: MockMvc) {
             )
         }
         status { isOk() }
-        header { string("X-LATEST-SEQUENCE-NUMBER", "5") }
+        header { string("X-LATEST-SEQUENCE-NUMBER", "6") }
     }
 }

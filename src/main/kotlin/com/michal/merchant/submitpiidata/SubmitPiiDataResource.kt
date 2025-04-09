@@ -4,6 +4,7 @@ import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
 import com.michal.sharedkernel.valueobject.Country
+import com.michal.sharedkernel.valueobject.Email
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.web.bind.annotation.PathVariable
@@ -28,7 +29,7 @@ class SubmitPiiDataResource(
         SubmitPiiData(
             aggregateId = MerchantId.of(merchantId),
             name = PiiData.Name.of(payload.name),
-            email = PiiData.Email.of(payload.email),
+            email = Email.of(payload.email),
             legalEntityId = PiiData.LegalEntityId.of(
                 country = Country.from(payload.countryCode),
                 vatNumber = payload.vatNumber,

@@ -5,6 +5,7 @@ import com.michal.config.events.readEvents
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
+import com.michal.merchant.domain.event.MerchantEvent.WelcomeEmailSent
 import com.michal.merchant.domain.valueobject.MerchantId
 import io.kotest.matchers.shouldBe
 import org.awaitility.kotlin.await
@@ -41,16 +42,17 @@ class MerchantE2eTest(
 
         canReconcilePiiDataInVersion2And3()
 
+        verifyEventStoreContainsAllEvents()
+
         await untilAsserted { canFetchMerchants() }
         await untilAsserted { canFetchMerchantById() }
-
-        verifyEventStoreContainsAllEvents()
     }
 
     private fun verifyEventStoreContainsAllEvents() {
         eventStorageEngine.readEvents(MerchantId.validStable().value) shouldBe listOf(
             MerchantOnboarded.validStable(),
             PiiDataSubmitted.validStable(),
+            WelcomeEmailSent.validStable(),
             PiiDataSubmitted.validStableV2(),
             PiiDataReconciled.validStable(),
             PiiDataSubmitted.validStableV3(),

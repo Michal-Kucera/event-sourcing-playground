@@ -3,10 +3,14 @@ package com.michal.merchant
 import com.michal.merchant.domain.Merchant
 import com.michal.merchant.domain.command.MerchantCommand.OnboardMerchant
 import com.michal.merchant.domain.command.MerchantCommand.ReconcilePiiData
+import com.michal.merchant.domain.command.MerchantCommand.SendWelcomeEmail
 import com.michal.merchant.domain.command.MerchantCommand.SubmitPiiData
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
+import com.michal.merchant.domain.event.MerchantEvent.WelcomeEmailSent
+import com.michal.merchant.sendwelcomeemail.SendWelcomeEmailCommandHandler
+import com.michal.sharedkernel.FakeEmailSender
 import com.michal.sharedkernel.valueobject.Country.Companion.GERMANY
 import com.michal.sharedkernel.valueobject.Country.Companion.UNITED_STATES_OF_AMERICA
 import org.axonframework.extension.kotlin.test.aggregateTestFixture
@@ -16,7 +20,12 @@ import org.junit.jupiter.api.Test
 
 class MerchantTest {
 
-    private val fixture = aggregateTestFixture<Merchant>()
+    private val emailSender = FakeEmailSender()
+    private val fixture = aggregateTestFixture<Merchant>().apply {
+        registerAnnotatedCommandHandler(
+            SendWelcomeEmailCommandHandler(repository, emailSender, shouldFail = false)
+        )
+    }
 
     @Nested
     inner class OnboardMerchantTest {
@@ -27,6 +36,48 @@ class MerchantTest {
                 .whenever(OnboardMerchant.validStable())
                 .expectSuccessfulHandlerExecution()
                 .expectEvents(MerchantOnboarded.validStable())
+        }
+    }
+
+    @Nested
+    inner class SendWelcomeEmailTest {
+
+        @Test
+        fun `fails when trying to send welcome email before PII data is submitted`() {
+            fixture
+                .given(MerchantOnboarded.validStable())
+                .whenever(SendWelcomeEmail.validStable())
+                .expectException(IllegalArgumentException::class.java)
+                .expectExceptionMessage("No PII data has been submitted yet")
+                .expectNoEvents()
+        }
+
+        @Test
+        fun `sends welcome email when PII data is submitted for the first time`() {
+            fixture
+                .given(
+                    MerchantOnboarded.validStable(),
+                    PiiDataSubmitted.validStable()
+                )
+                .whenever(SendWelcomeEmail.validStable())
+                .expectSuccessfulHandlerExecution()
+                .expectEvents(WelcomeEmailSent.validStable())
+
+            emailSender.verifyEmailWasSent(WelcomeEmailSent.validStable().to, WelcomeEmailSent.validStable().content)
+        }
+
+        @Test
+        fun `fails when trying to send welcome email multiple times`() {
+            fixture
+                .given(
+                    MerchantOnboarded.validStable(),
+                    PiiDataSubmitted.validStable(),
+                    WelcomeEmailSent.validStable()
+                )
+                .whenever(SendWelcomeEmail.validStable())
+                .expectException(IllegalArgumentException::class.java)
+                .expectExceptionMessage("Welcome email has already been sent")
+                .expectNoEvents()
         }
     }
 

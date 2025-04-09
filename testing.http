@@ -33,6 +33,7 @@ Content-Type: application/json
 
 {
   "name": "Paulo Merido",
+  "email": "paulo.merido@hello.com",
   "vatNumber": "123456789",
   "registrationNumber": "987654321",
   "countryCode": "USA",
@@ -48,6 +49,7 @@ Content-Type: application/json
 
 {
   "name": "Jennifer Shinde",
+  "email": "jennifer.shinde@hello.com",
   "vatNumber": "45678901",
   "registrationNumber": "76540987",
   "countryCode": "USA",
@@ -89,6 +91,7 @@ Content-Type: application/json
 
 {
   "name": "Mona Chauhan",
+  "email": "mona.chauhan@hello.com",
   "vatNumber": "98754567",
   "registrationNumber": "345678987",
   "countryCode": "USA",

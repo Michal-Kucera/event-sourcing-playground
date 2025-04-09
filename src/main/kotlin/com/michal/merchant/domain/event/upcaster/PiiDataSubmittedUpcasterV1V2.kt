@@ -3,7 +3,7 @@ package com.michal.merchant.domain.event.upcaster
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
-import com.michal.merchant.domain.valueobject.PiiData.Email
+import com.michal.sharedkernel.valueobject.Email
 import org.axonframework.serialization.SimpleSerializedType
 import org.axonframework.serialization.upcasting.event.IntermediateEventRepresentation
 import org.axonframework.serialization.upcasting.event.SingleEventUpcaster

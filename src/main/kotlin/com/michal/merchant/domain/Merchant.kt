@@ -7,10 +7,12 @@ import com.michal.merchant.domain.event.MerchantEvent
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
+import com.michal.merchant.domain.event.MerchantEvent.WelcomeEmailSent
 import com.michal.merchant.domain.valueobject.AnonymizedData
 import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiDataCollection
 import com.michal.sharedkernel.valueobject.Currency
+import com.michal.sharedkernel.valueobject.Email
 import com.michal.sharedkernel.valueobject.PlatformId
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
@@ -31,6 +33,7 @@ class Merchant {
     private lateinit var currency: Currency
     lateinit var anonymizedData: AnonymizedData
     lateinit var piiData: PiiDataCollection
+    private var welcomeEmailSent: Boolean = false
 
     @CommandHandler
     @CreationPolicy(ALWAYS)
@@ -90,6 +93,7 @@ class Merchant {
             is MerchantOnboarded -> on(event)
             is PiiDataReconciled -> on(event)
             is PiiDataSubmitted -> on(event)
+            is WelcomeEmailSent -> on(event)
         }
     }
 
@@ -113,5 +117,14 @@ class Merchant {
             event.reconciledLegalEntityId,
             event.reconciledLegalAddress,
         )
+    }
+
+    fun on(event: WelcomeEmailSent) {
+        welcomeEmailSent = true
+    }
+
+    fun sendWelcomeEmail(to: Email, content: String) {
+        require(!welcomeEmailSent) { "Welcome email has already been sent" }
+        applyEvent(WelcomeEmailSent(aggregateId, to, content))
     }
 }

@@ -1,6 +1,7 @@
 package com.michal.merchant.domain.valueobject
 
 import com.michal.sharedkernel.valueobject.Country
+import com.michal.sharedkernel.valueobject.Email
 
 data class PiiData private constructor(
     val version: Version,
@@ -58,21 +59,6 @@ data class PiiData private constructor(
                 require(name.isNotBlank()) { "Name cannot be blank" }
                 return Name(name)
             }
-        }
-    }
-
-    data class Email private constructor(
-        val value: String
-    ) {
-        override fun toString(): String = value
-
-        companion object {
-            fun of(email: String): Email {
-                require("@" in email) { "Email must contain @" }
-                return Email(email)
-            }
-
-            fun unknown() = Email("N/A")
         }
     }
 

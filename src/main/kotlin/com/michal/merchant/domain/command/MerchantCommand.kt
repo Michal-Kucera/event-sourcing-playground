@@ -6,6 +6,7 @@ import com.michal.merchant.domain.valueobject.MerchantId
 import com.michal.merchant.domain.valueobject.PiiData
 import com.michal.sharedkernel.eventsourcing.Command
 import com.michal.sharedkernel.valueobject.Currency
+import com.michal.sharedkernel.valueobject.Email
 import com.michal.sharedkernel.valueobject.PlatformId
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 
@@ -24,9 +25,16 @@ sealed interface MerchantCommand : Command<MerchantId> {
     data class SubmitPiiData(
         @TargetAggregateIdentifier override val aggregateId: MerchantId,
         val name: PiiData.Name,
-        val email: PiiData.Email,
+        val email: Email,
         val legalEntityId: PiiData.LegalEntityId,
         val legalAddress: PiiData.LegalAddress
+    ) : MerchantCommand {
+        companion object
+    }
+
+    data class SendWelcomeEmail(
+        @TargetAggregateIdentifier override val aggregateId: MerchantId,
+        val contentTemplate: String
     ) : MerchantCommand {
         companion object
     }

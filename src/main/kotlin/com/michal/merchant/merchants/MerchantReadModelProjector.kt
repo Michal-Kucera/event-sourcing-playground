@@ -7,6 +7,7 @@ import com.michal.merchant.domain.event.MerchantEvent
 import com.michal.merchant.domain.event.MerchantEvent.MerchantOnboarded
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataReconciled
 import com.michal.merchant.domain.event.MerchantEvent.PiiDataSubmitted
+import com.michal.merchant.domain.event.MerchantEvent.WelcomeEmailSent
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.ResetHandler
@@ -44,6 +45,7 @@ class MerchantReadModelProjector(
             is MerchantOnboarded -> on(event, sequenceNumber)
             is PiiDataSubmitted -> on(event, sequenceNumber)
             is PiiDataReconciled -> on(event, sequenceNumber)
+            is WelcomeEmailSent -> on(event, sequenceNumber)
         }
         if (shouldFail) {
             error("🤷🏼‍♂️ Oh no! Something has gone sideways with merchant ${event.aggregateId}!")
@@ -79,6 +81,17 @@ class MerchantReadModelProjector(
                 latestSequenceNumber = sequenceNumber
             })
             .execute()
+    }
+
+    private fun on(event: WelcomeEmailSent, sequenceNumber: Long) {
+        val projection = jooqContext.selectFrom(MERCHANT_PROJECTION)
+            .where(
+                MERCHANT_PROJECTION.MERCHANT_ID.eq(event.aggregateId.value),
+                MERCHANT_PROJECTION.LATEST_SEQUENCE_NUMBER.eq(sequenceNumber - 1)
+            )
+            .single()
+        projection.latestSequenceNumber = sequenceNumber
+        projection.update()
     }
 
     private fun on(event: PiiDataReconciled, sequenceNumber: Long) {
